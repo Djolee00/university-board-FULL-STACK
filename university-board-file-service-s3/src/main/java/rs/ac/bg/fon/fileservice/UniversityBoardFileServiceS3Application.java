@@ -9,5 +9,4 @@ public class UniversityBoardFileServiceS3Application {
     public static void main(String[] args) {
         SpringApplication.run(UniversityBoardFileServiceS3Application.class, args);
     }
-
 }
