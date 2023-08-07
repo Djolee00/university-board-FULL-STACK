@@ -1,0 +1,36 @@
+university-board-file-service-s3/HELP.md
+university-board-file-service-s3/target/
+university-board-file-service-s3/!.mvn/wrapper/maven-wrapper.jar
+university-board-file-service-s3/!**/src/main/**/target/
+university-board-file-service-s3/!**/src/test/**/target/
+### STS ###
+university-board-file-service-s3/.apt_generated
+university-board-file-service-s3/.classpath
+university-board-file-service-s3/.factorypath
+university-board-file-service-s3/.project
+university-board-file-service-s3/.settings
+university-board-file-service-s3/.springBeans
+university-board-file-service-s3/.sts4-cache
+### IntelliJ IDEA ###
+university-board-file-service-s3/.idea
+university-board-file-service-s3/*.iws
+university-board-file-service-s3/*.iml
+university-board-file-service-s3/*.ipr
+### NetBeans ###
+university-board-file-service-s3/nbproject/private/
+university-board-file-service-s3/nbbuild/
+university-board-file-service-s3/dist/
+university-board-file-service-s3/nbdist/
+university-board-file-service-s3/.nb-gradle/
+university-board-file-service-s3/build/
+university-board-file-service-s3/!**/src/main/**/build/
+university-board-file-service-s3/!**/src/test/**/build/
+### VS Code ###
+university-board-file-service-s3/.vscode/
+
+
+university-board-file-service-s3/src/main/resources/application.properties
+university-board-file-service-s3/mvnw
+university-board-file-service-s3/mvnw.cmd
+university-board-file-service-s3/.mvn/wrapper/maven-wrapper.jar
+university-board-file-service-s3/.mvn/wrapper/maven-wrapper.properties
