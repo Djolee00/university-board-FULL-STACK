@@ -1,19 +1,25 @@
 package rs.ac.bg.fon.fileservice.service.impl;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import rs.ac.bg.fon.fileservice.exceptions.FileDeletionException;
 import rs.ac.bg.fon.fileservice.exceptions.FileDownloadException;
 import rs.ac.bg.fon.fileservice.service.FileService;
 
@@ -29,17 +35,14 @@ public class FileServiceAwsImpl implements FileService {
 
     @Override
     public UUID uploadFile(MultipartFile multipartFile, UUID folderUuid) throws IOException {
-        // convert multipart file  to a file
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             fileOutputStream.write(multipartFile.getBytes());
         }
 
-        // generate file name
         UUID fileName = UUID.randomUUID();
         String folderPath = folderUuid.toString();
 
-        // upload file
         String objectKey = folderPath + "/" + fileName;
         PutObjectRequest request = new PutObjectRequest(bucketName, objectKey, file);
         ObjectMetadata metadata = new ObjectMetadata();
@@ -50,19 +53,72 @@ public class FileServiceAwsImpl implements FileService {
         request.setMetadata(metadata);
         s3Client.putObject(request);
 
-        // delete file
         file.delete();
 
         return fileName;
     }
 
     @Override
-    public Object downloadFile(String fileName) throws FileDownloadException, IOException {
-        return null;
+    public Object downloadFile(UUID folderUuid, UUID fileUuid)
+            throws FileDownloadException, IOException {
+        if (bucketIsEmpty()) {
+            throw new FileDownloadException("Requested bucket does not exist or is empty");
+        }
+
+        String objectKey = folderUuid + "/" + fileUuid;
+        S3Object object = s3Client.getObject(bucketName, objectKey);
+        try (S3ObjectInputStream s3is = object.getObjectContent()) {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(objectKey)) {
+                byte[] read_buf = new byte[1024];
+                int read_len;
+                while ((read_len = s3is.read(read_buf)) > 0) {
+                    fileOutputStream.write(read_buf, 0, read_len);
+                }
+            }
+            Path pathObject = Paths.get(objectKey);
+            Resource resource = new UrlResource(pathObject.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new FileDownloadException("Could not find the file!");
+            }
+        }
     }
 
     @Override
-    public boolean delete(String fileName) {
+    public boolean deleteFileLocally(UUID folderUuid, UUID fileUuid) {
+        String objectKey = folderUuid + "/" + fileUuid;
+
+        File file = Paths.get(objectKey).toFile();
+        if (file.exists()) {
+            file.delete();
+            return true;
+        }
         return false;
+    }
+
+    @Override
+    public void deleteFile(UUID folderUuid, UUID fileUuid) throws FileDeletionException {
+        String objectKey = folderUuid.toString() + "/" + fileUuid.toString();
+
+        if (!s3Client.doesObjectExist(bucketName, objectKey)) {
+            throw new FileDeletionException("File not found in the S3 bucket!");
+        }
+
+        try {
+            s3Client.deleteObject(bucketName, objectKey);
+        } catch (SdkClientException e) {
+            throw new FileDeletionException("Error occurred while deleting the file!");
+        }
+    }
+
+    private boolean bucketIsEmpty() {
+        ListObjectsV2Result result = s3Client.listObjectsV2(this.bucketName);
+        if (result == null) {
+            return false;
+        }
+        List<S3ObjectSummary> objects = result.getObjectSummaries();
+        return objects.isEmpty();
     }
 }
