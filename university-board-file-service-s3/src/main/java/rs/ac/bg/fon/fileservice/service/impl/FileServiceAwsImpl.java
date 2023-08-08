@@ -34,15 +34,20 @@ public class FileServiceAwsImpl implements FileService {
 
     @Override
     public UUID uploadFile(MultipartFile multipartFile, UUID folderUuid) throws IOException {
+        UUID fileName = UUID.randomUUID();
+        return uploadFile(multipartFile, folderUuid, fileName);
+    }
+
+    @Override
+    public UUID uploadFile(MultipartFile multipartFile, UUID folderUuid, UUID fileUuid)
+            throws IOException {
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             fileOutputStream.write(multipartFile.getBytes());
         }
-
-        UUID fileName = UUID.randomUUID();
         String folderPath = folderUuid.toString();
 
-        String objectKey = folderPath + "/" + fileName;
+        String objectKey = folderPath + "/" + fileUuid;
         PutObjectRequest request = new PutObjectRequest(bucketName, objectKey, file);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(multipartFile.getContentType());
@@ -53,7 +58,7 @@ public class FileServiceAwsImpl implements FileService {
 
         file.delete();
 
-        return fileName;
+        return fileUuid;
     }
 
     @Override

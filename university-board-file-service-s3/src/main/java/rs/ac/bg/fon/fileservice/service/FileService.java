@@ -12,6 +12,9 @@ public interface FileService {
     UUID uploadFile(MultipartFile multipartFile, UUID folderUuid)
             throws FileUploadException, IOException;
 
+    UUID uploadFile(MultipartFile multipartFile, UUID folderUuid, UUID fileUuid)
+            throws FileUploadException, IOException;
+
     Object downloadFile(UUID folderUuid, UUID fileUuid) throws FileDownloadException, IOException;
 
     void deleteFile(UUID folderUuid, UUID fileUuid) throws FileDeletionException;

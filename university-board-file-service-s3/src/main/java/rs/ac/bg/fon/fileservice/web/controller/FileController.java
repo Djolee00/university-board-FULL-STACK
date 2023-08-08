@@ -35,7 +35,8 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
             @RequestParam("file") MultipartFile multipartFile,
-            @RequestParam("folderUuid") UUID folderUuid)
+            @RequestParam("folderUuid") UUID folderUuid,
+            @RequestParam(value = "fileUuid", required = false) UUID fileUuid)
             throws FileEmptyException, FileUploadException, IOException {
         if (multipartFile.isEmpty()) {
             throw new FileEmptyException("File is empty. Cannot save an empty file");
@@ -50,13 +51,20 @@ public class FileController {
         if (isValidFile
                 && allowedFileExtensions.contains(
                         FilenameUtils.getExtension(multipartFile.getOriginalFilename()))) {
-            UUID fileUuid = fileService.uploadFile(multipartFile, folderUuid);
+            UUID generatedUuid;
+            if (fileUuid != null) {
+                generatedUuid = fileService.uploadFile(multipartFile, folderUuid, fileUuid);
+            } else {
+                generatedUuid = fileService.uploadFile(multipartFile, folderUuid);
+            }
+
             APIResponse apiResponse =
                     APIResponse.builder()
-                            .message("file uploaded successfully. File unique id =>" + fileUuid)
+                            .message(
+                                    "file uploaded successfully. File unique id =>" + generatedUuid)
                             .isSuccessful(true)
                             .statusCode(200)
-                            .data(fileUuid)
+                            .data(generatedUuid)
                             .build();
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } else {
