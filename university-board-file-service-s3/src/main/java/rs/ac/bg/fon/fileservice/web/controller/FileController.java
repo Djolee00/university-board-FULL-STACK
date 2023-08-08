@@ -1,10 +1,12 @@
 package rs.ac.bg.fon.fileservice.web.controller;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +43,9 @@ public class FileController {
         boolean isValidFile = isValidFile(multipartFile);
         List<String> allowedFileExtensions =
                 new ArrayList<>(
-                        Arrays.asList("pdf", "txt", "epub", "csv", "png", "jpg", "jpeg", "srt"));
+                        Arrays.asList(
+                                "pdf", "txt", "epub", "csv", "png", "jpg", "jpeg", "srt", "xlsx",
+                                "docx", ".rar", ".zip", ".pptx"));
 
         if (isValidFile
                 && allowedFileExtensions.contains(
@@ -73,10 +77,11 @@ public class FileController {
             throws FileDownloadException, IOException {
         Object response = fileService.downloadFile(folderUuid, fileUuid);
         if (response != null) {
+            Resource resource = (Resource) response;
             return ResponseEntity.ok()
                     .header(
                             HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + fileUuid + "\"")
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(response);
         } else {
             APIResponse apiResponse =
@@ -95,7 +100,14 @@ public class FileController {
             @RequestParam("fileUuid") @NotNull UUID fileUuid)
             throws FileDeletionException {
         fileService.deleteFile(folderUuid, fileUuid);
-        boolean isDeleted = fileService.deleteFileLocally(folderUuid, fileUuid);
+        APIResponse apiResponse =
+                APIResponse.builder().message("File deleted!").statusCode(200).build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-local")
+    public ResponseEntity<?> delete(@RequestParam("fileName") @NotBlank @NotNull String fileName) {
+        boolean isDeleted = fileService.deleteFileLocally(fileName);
         if (isDeleted) {
             APIResponse apiResponse =
                     APIResponse.builder().message("file deleted!").statusCode(200).build();

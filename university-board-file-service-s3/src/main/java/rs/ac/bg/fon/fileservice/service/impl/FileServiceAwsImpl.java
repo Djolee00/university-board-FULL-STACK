@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -46,8 +45,7 @@ public class FileServiceAwsImpl implements FileService {
         String objectKey = folderPath + "/" + fileName;
         PutObjectRequest request = new PutObjectRequest(bucketName, objectKey, file);
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(
-                "plain/" + FilenameUtils.getExtension(multipartFile.getOriginalFilename()));
+        metadata.setContentType(multipartFile.getContentType());
         metadata.addUserMetadata("Title", multipartFile.getOriginalFilename());
         metadata.setContentLength(file.length());
         request.setMetadata(metadata);
@@ -67,15 +65,16 @@ public class FileServiceAwsImpl implements FileService {
 
         String objectKey = folderUuid + "/" + fileUuid;
         S3Object object = s3Client.getObject(bucketName, objectKey);
+        String localFileName = object.getObjectMetadata().getUserMetaDataOf("Title");
         try (S3ObjectInputStream s3is = object.getObjectContent()) {
-            try (FileOutputStream fileOutputStream = new FileOutputStream(objectKey)) {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(localFileName)) {
                 byte[] read_buf = new byte[1024];
                 int read_len;
                 while ((read_len = s3is.read(read_buf)) > 0) {
                     fileOutputStream.write(read_buf, 0, read_len);
                 }
             }
-            Path pathObject = Paths.get(objectKey);
+            Path pathObject = Paths.get(localFileName);
             Resource resource = new UrlResource(pathObject.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -87,10 +86,8 @@ public class FileServiceAwsImpl implements FileService {
     }
 
     @Override
-    public boolean deleteFileLocally(UUID folderUuid, UUID fileUuid) {
-        String objectKey = folderUuid + "/" + fileUuid;
-
-        File file = Paths.get(objectKey).toFile();
+    public boolean deleteFileLocally(String fileName) {
+        File file = Paths.get(fileName).toFile();
         if (file.exists()) {
             file.delete();
             return true;

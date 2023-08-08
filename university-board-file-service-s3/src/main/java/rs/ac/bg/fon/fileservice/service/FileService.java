@@ -16,5 +16,5 @@ public interface FileService {
 
     void deleteFile(UUID folderUuid, UUID fileUuid) throws FileDeletionException;
 
-    boolean deleteFileLocally(UUID folderUuid, UUID fileUuid);
+    boolean deleteFileLocally(String fileName);
 }
