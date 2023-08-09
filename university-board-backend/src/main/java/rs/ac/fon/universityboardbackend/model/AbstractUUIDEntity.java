@@ -5,13 +5,12 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.converter.UuidCharConverter;
-
-import java.util.UUID;
 
 @Getter
 @Setter

@@ -2,7 +2,6 @@ package rs.ac.fon.universityboardbackend.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-
 import java.util.UUID;
 
 @Converter

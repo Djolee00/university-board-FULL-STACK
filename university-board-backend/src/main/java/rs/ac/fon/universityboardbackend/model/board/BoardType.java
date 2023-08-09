@@ -1,9 +1,6 @@
 package rs.ac.fon.universityboardbackend.model.board;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +12,8 @@ import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 @Setter
 @NoArgsConstructor
 @Accessors(fluent = true)
+@Entity
+@Table(name = "board_type")
 public class BoardType extends AbstractUUIDEntity {
 
     @Id

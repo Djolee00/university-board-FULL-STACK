@@ -14,6 +14,8 @@ import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 @Setter
 @NoArgsConstructor
 @Accessors(fluent = true)
+@Entity
+@Table(name = "comment")
 public class Comment extends AbstractUUIDEntity {
 
     @Id
@@ -34,7 +36,7 @@ public class Comment extends AbstractUUIDEntity {
     @Column(name = "num_of_likes")
     private int numOfLikes;
 
-    @ManyToOne
-    @JoinColumn(name = "board_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 }
