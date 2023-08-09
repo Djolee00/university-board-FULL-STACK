@@ -1,3 +1,4 @@
+######FILE SERVICE#######
 university-board-file-service-s3/HELP.md
 university-board-file-service-s3/target/
 university-board-file-service-s3/!.mvn/wrapper/maven-wrapper.jar
@@ -34,3 +35,41 @@ university-board-file-service-s3/mvnw
 university-board-file-service-s3/mvnw.cmd
 university-board-file-service-s3/.mvn/wrapper/maven-wrapper.jar
 university-board-file-service-s3/.mvn/wrapper/maven-wrapper.properties
+
+######BACKEND#######
+university-board-backend/HELP.md
+university-board-backend/target/
+university-board-backend/!.mvn/wrapper/maven-wrapper.jar
+university-board-backend/!**/src/main/**/target/
+university-board-backend/!**/src/test/**/target/
+### STS ###      
+university-board-backend/.apt_generated
+university-board-backend/.classpath
+university-board-backend/.factorypath
+university-board-backend/.project
+university-board-backend/.settings
+university-board-backend/.springBeans
+university-board-backend/.sts4-cache
+### IntelliJ IDEA
+university-board-backend/.idea
+university-board-backend/*.iws
+university-board-backend/*.iml
+university-board-backend/*.ipr
+### NetBeans ### 
+university-board-backend/nbproject/private/
+university-board-backend/nbbuild/
+university-board-backend/dist/
+university-board-backend/nbdist/
+university-board-backend/.nb-gradle/
+university-board-backend/build/
+university-board-backend/!**/src/main/**/build/
+university-board-backend/!**/src/test/**/build/
+### VS Code ###  
+university-board-backend/.vscode/
+				 
+university-board-backend/src/main/resources/application.properties
+university-board-backend/mvnw
+university-board-backend/mvnw.cmd
+university-board-backend/.mvn/wrapper/maven-wrapper.jar
+university-board-backend/.mvn/wrapper/maven-wrapper.properties
+
