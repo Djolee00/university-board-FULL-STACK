@@ -27,7 +27,7 @@ public class Privilege {
 
     @Getter
     @RequiredArgsConstructor
-    private enum PrivilegeCode {
+    public enum PrivilegeCode {
         ACCOUNT_C("Account creation"),
         ACCOUNT_W("Account modification"),
         ACCOUNT_R("Account read");
