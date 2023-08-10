@@ -1,15 +1,16 @@
 package rs.ac.fon.universityboardbackend.web.dto.response;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.Getter;
 import rs.ac.fon.universityboardbackend.model.employee.AcademicTitle;
 import rs.ac.fon.universityboardbackend.web.dto.base.EmployeeBaseDto;
-import rs.ac.fon.universityboardbackend.web.dto.base.UserProfileBaseDto;
 
 @Getter
 public class EmployeeResponseDto extends EmployeeBaseDto {
-    private final UUID uuid;
-    private final UserProfileBaseDto userProfileBaseDto;
+
+    @NotNull private final UUID uuid;
+    private final UserProfileResponseDto userProfileResponseDto;
 
     public EmployeeResponseDto(
             String firstName,
@@ -17,9 +18,9 @@ public class EmployeeResponseDto extends EmployeeBaseDto {
             String phoneNumber,
             AcademicTitle academicTitle,
             UUID uuid,
-            UserProfileBaseDto userProfileBaseDto) {
+            UserProfileResponseDto userProfileResponseDto) {
         super(firstName, lastName, phoneNumber, academicTitle);
         this.uuid = uuid;
-        this.userProfileBaseDto = userProfileBaseDto;
+        this.userProfileResponseDto = userProfileResponseDto;
     }
 }

@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.web.dto.response;
 
-import java.util.List;
+import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import rs.ac.fon.universityboardbackend.web.dto.base.PrivilegeDto;
@@ -10,10 +11,10 @@ import rs.ac.fon.universityboardbackend.web.dto.base.UserProfileBaseDto;
 @Getter
 public class UserProfileResponseDto extends UserProfileBaseDto {
 
-    private final UUID uuid;
+    @NotNull private final UUID uuid;
 
     public UserProfileResponseDto(
-            String email, RoleDto role, List<PrivilegeDto> privileges, UUID uuid) {
+            String email, RoleDto role, Set<PrivilegeDto> privileges, UUID uuid) {
         super(email, role, privileges);
         this.uuid = uuid;
     }
