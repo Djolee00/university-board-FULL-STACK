@@ -3,6 +3,7 @@ package rs.ac.fon.universityboardbackend.service.impl;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.model.user.Role;
 import rs.ac.fon.universityboardbackend.repository.RoleRepository;
 import rs.ac.fon.universityboardbackend.service.RoleService;
@@ -17,6 +18,9 @@ public class RoleServiceImpl implements RoleService {
     public Role findRoleByUuid(UUID uuid) {
         return roleRepository
                 .findByUuid(uuid)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(
+                        () ->
+                                new ResourceNotFoundException(
+                                        "Role with UUID - " + uuid + " - doesn't exist"));
     }
 }

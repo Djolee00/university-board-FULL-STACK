@@ -1,6 +1,6 @@
 package rs.ac.fon.universityboardbackend.web.controller;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<CreatedResponse<UUID>> createEmployee(
-            @RequestBody @NotNull EmployeeCreateDto employeeCreateDto) {
+            @Valid @RequestBody EmployeeCreateDto employeeCreateDto) {
         Employee employee = EmployeeMapper.INSTANCE.employeeCreateDtoToEmployee(employeeCreateDto);
         if (employee.userProfile() != null) {
             UserProfile userProfile = employee.userProfile();
