@@ -20,22 +20,24 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    ResponseEntity<ProblemDetail> handleProductNotFoundException(ResourceNotFoundException ex) {
+    ResponseEntity<ProblemDetail> onResourceNotFoundException(ResourceNotFoundException ex) {
         ProblemDetail problemDetail =
                 ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problemDetail.setTitle("Requested resource doesn't exist");
         problemDetail.setType(createExceptionTypeUri(ex.getClass()));
         problemDetail.setProperty("timestamp", Instant.now());
+
         return new ResponseEntity<>(problemDetail, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ValidationException.class)
-    ResponseEntity<ProblemDetail> handleProductNotFoundException(ValidationException ex) {
+    ResponseEntity<ProblemDetail> onValidationException(ValidationException ex) {
         ProblemDetail problemDetail =
                 ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setType(createExceptionTypeUri(ex.getClass()));
         problemDetail.setTitle("Invalid request");
         problemDetail.setProperty("timestamp", Instant.now());
+
         return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);
     }
 
@@ -56,7 +58,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ProblemDetail> handleConstraintViolation(
+    public ResponseEntity<ProblemDetail> onConstraintViolationException(
             ConstraintViolationException ex) {
         Set<Violation> violations = getViolations(ex);
 
@@ -72,12 +74,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> handleAllUncaughtException(Exception ex) {
+    public ResponseEntity<ProblemDetail> onUncaughtException(Exception ex) {
         ProblemDetail problemDetail =
                 ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         problemDetail.setType(createExceptionTypeUri(ex.getClass()));
         problemDetail.setTitle("Error occurred");
         problemDetail.setProperty("timestamp", Instant.now());
+
         return new ResponseEntity<>(problemDetail, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
