@@ -23,12 +23,13 @@ public class UserProfileJpaSpecification implements Specification<UserProfile> {
             Root<UserProfile> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (search.email() != null) {
-            predicates.add(criteriaBuilder.equal(root.get(UserProfile_.email), search.email()));
+        if (search.getEmail() != null) {
+            predicates.add(criteriaBuilder.equal(root.get(UserProfile_.email), search.getEmail()));
         }
 
-        if (search.password() != null) {
-            predicates.add(criteriaBuilder.equal(root.get(UserProfile_.password), search.email()));
+        if (search.getPassword() != null) {
+            predicates.add(
+                    criteriaBuilder.equal(root.get(UserProfile_.password), search.getEmail()));
         }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

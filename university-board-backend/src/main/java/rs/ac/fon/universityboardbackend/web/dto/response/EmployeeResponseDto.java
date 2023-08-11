@@ -10,7 +10,7 @@ import rs.ac.fon.universityboardbackend.web.dto.base.EmployeeBaseDto;
 public class EmployeeResponseDto extends EmployeeBaseDto {
 
     @NotNull private final UUID uuid;
-    private final UserProfileResponseDto userProfileResponseDto;
+    private final UserProfileResponseDto userProfile;
 
     public EmployeeResponseDto(
             String firstName,
@@ -18,9 +18,9 @@ public class EmployeeResponseDto extends EmployeeBaseDto {
             String phoneNumber,
             AcademicTitle academicTitle,
             UUID uuid,
-            UserProfileResponseDto userProfileResponseDto) {
+            UserProfileResponseDto userProfile) {
         super(firstName, lastName, phoneNumber, academicTitle);
         this.uuid = uuid;
-        this.userProfileResponseDto = userProfileResponseDto;
+        this.userProfile = userProfile;
     }
 }

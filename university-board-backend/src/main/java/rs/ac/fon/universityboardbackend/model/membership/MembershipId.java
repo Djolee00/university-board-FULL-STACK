@@ -5,7 +5,6 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -13,8 +12,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @EqualsAndHashCode
-@NoArgsConstructor
-@Accessors(fluent = true, chain = true)
+@Accessors(chain = true)
 public class MembershipId implements Serializable {
 
     @Column(name = "board_id")

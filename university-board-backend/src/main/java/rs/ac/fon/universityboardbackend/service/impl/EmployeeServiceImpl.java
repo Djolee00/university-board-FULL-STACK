@@ -1,9 +1,11 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
-import jakarta.transaction.Transactional;
 import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
 import rs.ac.fon.universityboardbackend.model.user.Privilege;
@@ -22,29 +24,43 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void saveOrUpdate(Employee employee) {
-        if (employee.userProfile() != null) {
+        if (employee.getUserProfile() != null) {
             if (userProfileService.count(
-                            new UserProfileSearch().email(employee.userProfile().email()))
+                            new UserProfileSearch().setEmail(employee.getUserProfile().getEmail()))
                     > 0) {
                 throw new ValidationException(
-                        "Email - " + employee.userProfile().email() + " - already exists.");
+                        "Email - " + employee.getUserProfile().getEmail() + " - already exists.");
             }
 
-            Set<Privilege> privileges = employee.userProfile().privileges();
+            Set<Privilege> privileges = employee.getUserProfile().getPrivileges();
             if (privileges != null && !privileges.isEmpty()) {
                 privileges.forEach(
                         privilege -> {
-                            if (employee.userProfile().role().privileges().contains(privilege)) {
+                            if (employee.getUserProfile()
+                                    .getRole()
+                                    .getPrivileges()
+                                    .contains(privilege)) {
                                 throw new ValidationException(
                                         "Privilege with code - "
-                                                + privilege.code()
+                                                + privilege.getCode()
                                                 + " - already exists in Role - "
-                                                + employee.userProfile().role().name());
+                                                + employee.getUserProfile().getRole().getName());
                             }
                         });
             }
         }
 
         employeeRepository.save(employee);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Employee findByUuid(UUID uuid) {
+        return employeeRepository
+                .findByUuid(uuid)
+                .orElseThrow(
+                        () ->
+                                new ResourceNotFoundException(
+                                        "Employee with UUUID - " + uuid + " - doesn't exist"));
     }
 }

@@ -2,6 +2,7 @@ package rs.ac.fon.universityboardbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.model.user.Privilege;
 import rs.ac.fon.universityboardbackend.model.user.Privilege.PrivilegeCode;
@@ -15,6 +16,7 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     private final PrivilegeRepository privilegeRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Privilege findByCode(PrivilegeCode code) {
         return privilegeRepository
                 .findByCode(code)

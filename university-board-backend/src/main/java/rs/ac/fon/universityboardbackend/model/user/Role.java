@@ -4,15 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@Accessors(fluent = true, chain = true)
+@Accessors(chain = true)
 @Entity
 @Table(name = "role")
 public class Role extends AbstractUUIDEntity {

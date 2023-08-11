@@ -6,10 +6,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rs.ac.fon.universityboardbackend.mapper.EmployeeMapper;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
 import rs.ac.fon.universityboardbackend.model.user.UserProfile;
@@ -18,6 +15,7 @@ import rs.ac.fon.universityboardbackend.service.PrivilegeService;
 import rs.ac.fon.universityboardbackend.service.RoleService;
 import rs.ac.fon.universityboardbackend.web.dto.create.EmployeeCreateDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponse;
+import rs.ac.fon.universityboardbackend.web.dto.response.EmployeeResponseDto;
 
 @RestController
 @RequestMapping("/employees")
@@ -32,21 +30,29 @@ public class EmployeeController {
     public ResponseEntity<CreatedResponse<UUID>> createEmployee(
             @Valid @RequestBody EmployeeCreateDto employeeCreateDto) {
         Employee employee = EmployeeMapper.INSTANCE.employeeCreateDtoToEmployee(employeeCreateDto);
-        if (employee.userProfile() != null) {
-            UserProfile userProfile = employee.userProfile();
-            userProfile.employee(employee);
-            userProfile.role(roleService.findRoleByUuid(userProfile.role().uuid()));
+        if (employee.getUserProfile() != null) {
+            UserProfile userProfile = employee.getUserProfile();
+            userProfile.setEmployee(employee);
+            userProfile.setRole(roleService.findRoleByUuid(userProfile.getRole().getUuid()));
 
-            if (userProfile.privileges() != null && !userProfile.privileges().isEmpty()) {
-                userProfile.privileges(
-                        userProfile.privileges().stream()
-                                .map(privilege -> privilegeService.findByCode(privilege.code()))
+            if (userProfile.getPrivileges() != null && !userProfile.getPrivileges().isEmpty()) {
+                userProfile.setPrivileges(
+                        userProfile.getPrivileges().stream()
+                                .map(privilege -> privilegeService.findByCode(privilege.getCode()))
                                 .collect(Collectors.toSet()));
             }
         }
 
         employeeService.saveOrUpdate(employee);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CreatedResponse<>(employee.uuid()));
+                .body(new CreatedResponse<>(employee.getUuid()));
+    }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<EmployeeResponseDto> getEmployeeByUuid(@PathVariable UUID uuid) {
+        Employee employee = employeeService.findByUuid(uuid);
+        EmployeeResponseDto employeeResponseDto =
+                EmployeeMapper.INSTANCE.employeeToEmployeeResponseDto(employee);
+        return ResponseEntity.ok(employeeResponseDto);
     }
 }

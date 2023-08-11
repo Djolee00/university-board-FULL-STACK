@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 public class UserProfileSearch {
     private String email;
     private String password;

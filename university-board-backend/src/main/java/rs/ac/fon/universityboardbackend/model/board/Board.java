@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,8 +15,7 @@ import rs.ac.fon.universityboardbackend.model.membership.Membership;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@Accessors(fluent = true, chain = true)
+@Accessors(chain = true)
 @Entity
 @Table(name = "board")
 public class Board extends AbstractUUIDEntity {
@@ -65,7 +63,7 @@ public class Board extends AbstractUUIDEntity {
                 comments = new HashSet<>();
             }
             comments.add(comment);
-            comment.board(this);
+            comment.setBoard(this);
         }
     }
 
@@ -75,7 +73,7 @@ public class Board extends AbstractUUIDEntity {
                 boardFiles = new HashSet<>();
             }
             boardFiles.add(boardFile);
-            boardFile.board(this);
+            boardFile.setBoard(this);
         }
     }
 
@@ -85,7 +83,7 @@ public class Board extends AbstractUUIDEntity {
                 memberships = new HashSet<>();
             }
             memberships.add(membership);
-            membership.board(this);
+            membership.setBoard(this);
         }
     }
 

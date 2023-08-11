@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -14,8 +13,7 @@ import rs.ac.fon.universityboardbackend.model.employee.Employee;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@Accessors(fluent = true, chain = true)
+@Accessors(chain = true)
 @Entity
 @Table(name = "membership")
 public class Membership extends AbstractUUIDEntity {

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
@@ -14,8 +13,7 @@ import rs.ac.fon.universityboardbackend.model.employee.Employee;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@Accessors(fluent = true, chain = true)
+@Accessors(chain = true)
 @Entity
 @Table(name = "user_profile")
 public class UserProfile extends AbstractUUIDEntity {

@@ -2,16 +2,12 @@ package rs.ac.fon.universityboardbackend.model.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@Accessors(fluent = true, chain = true)
+@Accessors(chain = true)
 @Entity
 @Table(name = "privilege")
 public class Privilege {

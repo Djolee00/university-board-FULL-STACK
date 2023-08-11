@@ -9,13 +9,11 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.converter.UuidCharConverter;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(fluent = true)
 @MappedSuperclass
 public abstract class AbstractUUIDEntity {
 
@@ -26,9 +24,9 @@ public abstract class AbstractUUIDEntity {
 
     @PrePersist
     public void prePersist() {
-        if (uuid() == null) {
+        if (getUuid() == null) {
             synchronized (this) {
-                if (uuid() == null) {
+                if (getUuid() == null) {
                     uuid = UUID.randomUUID();
                 }
             }
