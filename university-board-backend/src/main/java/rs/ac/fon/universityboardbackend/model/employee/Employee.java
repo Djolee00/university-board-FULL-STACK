@@ -12,7 +12,7 @@ import rs.ac.fon.universityboardbackend.model.user.UserProfile;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = true)
 @Entity
 @Table(name = "employee")
 public class Employee extends AbstractUUIDEntity {

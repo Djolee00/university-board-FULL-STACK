@@ -43,7 +43,7 @@ public class Membership extends AbstractUUIDEntity {
 
     @Getter
     @RequiredArgsConstructor
-    private enum MembershipStatus {
+    public enum MembershipStatus {
         ACTIVE("Active"),
         ON_LEAVE("On leave"),
         PROBATION("Probation");

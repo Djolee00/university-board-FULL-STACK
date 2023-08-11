@@ -91,7 +91,7 @@ public class Board extends AbstractUUIDEntity {
 
     @Getter
     @RequiredArgsConstructor
-    private enum BoardStatus {
+    public enum BoardStatus {
         PENDING("Pending"),
         ACTIVE("Active"),
         CLOSED("Closed"),

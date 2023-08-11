@@ -1,0 +1,35 @@
+package rs.ac.fon.universityboardbackend.search.specification;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
+import rs.ac.fon.universityboardbackend.model.user.UserProfile;
+import rs.ac.fon.universityboardbackend.model.user.UserProfile_;
+import rs.ac.fon.universityboardbackend.search.domain.UserProfileSearch;
+
+@RequiredArgsConstructor
+public class UserProfileJpaSpecification implements Specification<UserProfile> {
+
+    private final UserProfileSearch search;
+
+    @Override
+    public Predicate toPredicate(
+            Root<UserProfile> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (search.email() != null) {
+            predicates.add(criteriaBuilder.equal(root.get(UserProfile_.email), search.email()));
+        }
+
+        if (search.password() != null) {
+            predicates.add(criteriaBuilder.equal(root.get(UserProfile_.password), search.email()));
+        }
+
+        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+    }
+}
