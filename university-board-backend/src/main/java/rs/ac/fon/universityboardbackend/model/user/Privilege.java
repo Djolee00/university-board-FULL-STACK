@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(chain = true)
+@Accessors(fluent = true, chain = true)
 @Entity
 @Table(name = "privilege")
 public class Privilege {
@@ -40,6 +40,6 @@ public class Privilege {
         COMMENT_D("Delete Comment"),
         COMMENT_R("Read Comments"),
         COMMENT_W("Write Comment");
-        private final String name;
+        private final String description;
     }
 }

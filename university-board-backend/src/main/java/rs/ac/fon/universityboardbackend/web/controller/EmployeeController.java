@@ -40,7 +40,7 @@ public class EmployeeController {
             if (userProfile.privileges() != null && !userProfile.privileges().isEmpty()) {
                 userProfile.privileges(
                         userProfile.privileges().stream()
-                                .map(privilege -> privilegeService.findByCode(privilege.getCode()))
+                                .map(privilege -> privilegeService.findByCode(privilege.code()))
                                 .collect(Collectors.toSet()));
             }
         }

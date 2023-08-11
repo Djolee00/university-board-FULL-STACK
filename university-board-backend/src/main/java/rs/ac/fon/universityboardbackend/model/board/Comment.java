@@ -13,7 +13,7 @@ import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = true)
 @Entity
 @Table(name = "comment")
 public class Comment extends AbstractUUIDEntity {

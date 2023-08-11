@@ -22,9 +22,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void saveOrUpdate(Employee employee) {
-        if(employee.userProfile() != null){
-            if(userProfileService.count(new UserProfileSearch().email(employee.userProfile().email())) > 0){
-                throw new ValidationException("Email - " + employee.userProfile().email() + " - already exists.");
+        if (employee.userProfile() != null) {
+            if (userProfileService.count(
+                            new UserProfileSearch().email(employee.userProfile().email()))
+                    > 0) {
+                throw new ValidationException(
+                        "Email - " + employee.userProfile().email() + " - already exists.");
             }
 
             Set<Privilege> privileges = employee.userProfile().privileges();
@@ -34,14 +37,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                             if (employee.userProfile().role().privileges().contains(privilege)) {
                                 throw new ValidationException(
                                         "Privilege with code - "
-                                                + privilege.getCode()
+                                                + privilege.code()
                                                 + " - already exists in Role - "
                                                 + employee.userProfile().role().name());
                             }
                         });
             }
         }
-
 
         employeeRepository.save(employee);
     }

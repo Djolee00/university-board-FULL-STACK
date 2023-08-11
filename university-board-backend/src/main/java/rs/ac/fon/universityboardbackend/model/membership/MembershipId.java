@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = true)
 public class MembershipId implements Serializable {
 
     @Column(name = "board_id")

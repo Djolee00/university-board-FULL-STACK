@@ -12,6 +12,7 @@ import rs.ac.fon.universityboardbackend.service.UserProfileService;
 public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
+
     @Override
     public long count(UserProfileSearch search) {
         return userProfileRepository.count(new UserProfileJpaSpecification(search));

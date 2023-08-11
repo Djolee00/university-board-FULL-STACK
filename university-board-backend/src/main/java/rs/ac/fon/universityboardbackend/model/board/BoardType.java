@@ -11,7 +11,7 @@ import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = true)
 @Entity
 @Table(name = "board_type")
 public class BoardType extends AbstractUUIDEntity {

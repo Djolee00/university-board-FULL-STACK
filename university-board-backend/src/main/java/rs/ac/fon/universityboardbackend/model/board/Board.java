@@ -17,7 +17,7 @@ import rs.ac.fon.universityboardbackend.model.membership.Membership;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = true)
 @Entity
 @Table(name = "board")
 public class Board extends AbstractUUIDEntity {

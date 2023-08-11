@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import rs.ac.fon.universityboardbackend.search.domain.UserProfileSearch;
 @RequiredArgsConstructor
 public class UserProfileJpaSpecification implements Specification<UserProfile> {
 
-    private final UserProfileSearch search;
+    @NotNull private final UserProfileSearch search;
 
     @Override
     public Predicate toPredicate(

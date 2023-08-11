@@ -15,7 +15,7 @@ import rs.ac.fon.universityboardbackend.model.employee.Employee;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = true)
 @Entity
 @Table(name = "membership")
 public class Membership extends AbstractUUIDEntity {
