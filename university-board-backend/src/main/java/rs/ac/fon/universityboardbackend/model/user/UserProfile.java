@@ -2,6 +2,7 @@ package rs.ac.fon.universityboardbackend.model.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,12 +24,12 @@ public class UserProfile extends AbstractUUIDEntity {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Email(message = "Invalid email format")
     @Column(name = "email")
     private String email;
 
-    @NotNull
+    @NotBlank
     @Column(name = "password")
     private String password;
 

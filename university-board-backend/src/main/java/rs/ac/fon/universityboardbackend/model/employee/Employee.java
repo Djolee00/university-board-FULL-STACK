@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.model.employee;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,15 +21,15 @@ public class Employee extends AbstractUUIDEntity {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Column(name = "first_name")
     private String firstName;
 
-    @NotNull
+    @NotBlank
     @Column(name = "last_name")
     private String lastName;
 
-    @NotNull
+    @NotBlank
     @Column(name = "phone_number")
     private String phoneNumber;
 

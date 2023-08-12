@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.model.board;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,11 +20,11 @@ public class BoardFile extends AbstractUUIDEntity {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Column(name = "original_name")
-    private String original_name;
+    private String originalName;
 
-    @NotNull
+    @NotBlank
     @Column(name = "type")
     private String type;
 

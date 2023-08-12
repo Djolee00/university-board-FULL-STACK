@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.model.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -17,7 +18,7 @@ public class Privilege {
     @Column(name = "code")
     private PrivilegeCode code;
 
-    @NotNull
+    @NotBlank
     @Column(name = "name")
     private String name;
 

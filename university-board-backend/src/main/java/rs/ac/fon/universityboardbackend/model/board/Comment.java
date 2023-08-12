@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.model.board;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -24,7 +25,7 @@ public class Comment extends AbstractUUIDEntity {
     @Column(name = "title")
     private String title;
 
-    @NotNull
+    @NotBlank
     @Size(min = 1, message = "Description must have at least 1 character")
     @Column(name = "description")
     private String description;
