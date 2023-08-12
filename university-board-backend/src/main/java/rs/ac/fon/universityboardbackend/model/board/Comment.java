@@ -1,14 +1,13 @@
 package rs.ac.fon.universityboardbackend.model.board;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
+
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -34,6 +33,11 @@ public class Comment extends AbstractUUIDEntity {
     @PositiveOrZero
     @Column(name = "num_of_likes")
     private int numOfLikes;
+
+    @NotNull
+    @FutureOrPresent
+    @Column(name = "time")
+    private OffsetDateTime time;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
