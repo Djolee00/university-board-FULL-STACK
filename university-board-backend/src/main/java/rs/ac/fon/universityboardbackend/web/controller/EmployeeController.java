@@ -83,7 +83,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/{uuid}")
-    public ResponseEntity<EmployeeResponseDto> updateEmployee(
+    public ResponseEntity<Void> updateEmployee(
             @PathVariable UUID uuid, @RequestBody EmployeeBaseDto employeeBaseDto) {
         Employee employee = employeeService.findByUuid(uuid);
 
@@ -94,7 +94,7 @@ public class EmployeeController {
                 .ifPresent(employee::setAcademicTitle);
 
         employeeService.saveOrUpdate(employee);
-        return ResponseEntity.ok(EmployeeMapper.INSTANCE.employeeToEmployeeResponseDto(employee));
+        return ResponseEntity.ok(null);
     }
 
     @DeleteMapping("/{uuid}")

@@ -29,11 +29,6 @@ public class Comment extends AbstractUUIDEntity {
     private String description;
 
     @NotNull
-    @PositiveOrZero
-    @Column(name = "num_of_likes")
-    private int numOfLikes;
-
-    @NotNull
     @Column(name = "time")
     private OffsetDateTime time;
 

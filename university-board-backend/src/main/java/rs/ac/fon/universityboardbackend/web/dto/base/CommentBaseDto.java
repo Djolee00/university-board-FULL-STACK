@@ -11,6 +11,5 @@ public class CommentBaseDto implements BaseDto {
 
     private final String title;
     @NotBlank private final String description;
-    private final int numOfLikes = 0;
     private final OffsetDateTime time = OffsetDateTime.now();
 }
