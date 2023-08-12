@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 import rs.ac.fon.universityboardbackend.model.membership.Membership;
 
@@ -36,11 +37,13 @@ public class Board extends AbstractUUIDEntity {
 
     @NotNull
     @FutureOrPresent
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "start_date")
     private LocalDate startDate;
 
     @NotNull
     @FutureOrPresent
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "end_date")
     private LocalDate endDate;
 

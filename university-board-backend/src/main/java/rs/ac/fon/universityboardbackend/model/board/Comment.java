@@ -2,12 +2,11 @@ package rs.ac.fon.universityboardbackend.model.board;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
-
-import java.time.OffsetDateTime;
 
 @Getter
 @Setter

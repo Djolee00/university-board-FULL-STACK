@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
@@ -34,6 +35,7 @@ public class Membership extends AbstractUUIDEntity {
     @NotNull
     @FutureOrPresent
     @Column(name = "commencement_date")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate commencementDate;
 
     @NotNull
