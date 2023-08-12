@@ -1,3 +1,3 @@
 package rs.ac.fon.universityboardbackend.web.dto.response;
 
-public record CreatedResponse<T>(T identifier) {}
+public record CreatedResponseDto<T>(T identifier) {}

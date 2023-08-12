@@ -15,7 +15,7 @@ import rs.ac.fon.universityboardbackend.model.board.BoardType;
 import rs.ac.fon.universityboardbackend.service.BoardService;
 import rs.ac.fon.universityboardbackend.service.BoardTypeService;
 import rs.ac.fon.universityboardbackend.web.dto.create.BoardCreateDto;
-import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponse;
+import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponseDto;
 
 @RestController
 @RequestMapping("/boards")
@@ -27,7 +27,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<CreatedResponse<UUID>> createBoard(
+    public ResponseEntity<CreatedResponseDto<UUID>> createBoard(
             @RequestBody @Valid BoardCreateDto boardCreateDto) {
 
         Board board = boardMapper.boardCreateDtoToBoard(boardCreateDto);
@@ -39,6 +39,6 @@ public class BoardController {
 
         boardService.saveOrUpdate(board);
 
-        return new ResponseEntity<>(new CreatedResponse<>(board.getUuid()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CreatedResponseDto<>(board.getUuid()), HttpStatus.CREATED);
     }
 }

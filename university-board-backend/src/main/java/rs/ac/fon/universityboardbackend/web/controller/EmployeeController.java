@@ -20,7 +20,7 @@ import rs.ac.fon.universityboardbackend.service.PrivilegeService;
 import rs.ac.fon.universityboardbackend.service.RoleService;
 import rs.ac.fon.universityboardbackend.web.dto.base.EmployeeBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.create.EmployeeCreateDto;
-import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponse;
+import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponseDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.EmployeeResponseDto;
 
 @RestController
@@ -33,7 +33,7 @@ public class EmployeeController {
     private final PrivilegeService privilegeService;
 
     @PostMapping
-    public ResponseEntity<CreatedResponse<UUID>> createEmployee(
+    public ResponseEntity<CreatedResponseDto<UUID>> createEmployee(
             @Valid @RequestBody EmployeeCreateDto employeeCreateDto) {
         Employee employee = EmployeeMapper.INSTANCE.employeeCreateDtoToEmployee(employeeCreateDto);
         if (employee.getUserProfile() != null) {
@@ -51,7 +51,7 @@ public class EmployeeController {
 
         employeeService.saveOrUpdate(employee);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CreatedResponse<>(employee.getUuid()));
+                .body(new CreatedResponseDto<>(employee.getUuid()));
     }
 
     @GetMapping("/{uuid}")

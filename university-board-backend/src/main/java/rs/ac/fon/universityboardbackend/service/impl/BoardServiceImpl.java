@@ -2,8 +2,10 @@ package rs.ac.fon.universityboardbackend.service.impl;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
@@ -20,6 +22,16 @@ public class BoardServiceImpl implements BoardService {
     public void saveOrUpdate(Board board) {
         boardValidation(board);
         boardRepository.save(board);
+    }
+
+    @Override
+    public Board findByUuid(UUID uuid) {
+        return boardRepository
+                .findByUuid(uuid)
+                .orElseThrow(
+                        () ->
+                                new ResourceNotFoundException(
+                                        "Board with UUID - " + uuid + " - doesn't exist"));
     }
 
     private void boardValidation(Board board) {

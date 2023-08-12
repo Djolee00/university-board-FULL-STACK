@@ -34,7 +34,6 @@ public class Comment extends AbstractUUIDEntity {
     private int numOfLikes;
 
     @NotNull
-    @FutureOrPresent
     @Column(name = "time")
     private OffsetDateTime time;
 
