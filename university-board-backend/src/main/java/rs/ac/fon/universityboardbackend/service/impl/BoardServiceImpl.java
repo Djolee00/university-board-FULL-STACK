@@ -11,6 +11,7 @@ import rs.ac.fon.universityboardbackend.service.BoardService;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
+
     @Override
     public void saveOrUpdate(Board board) {
         boardRepository.save(board);

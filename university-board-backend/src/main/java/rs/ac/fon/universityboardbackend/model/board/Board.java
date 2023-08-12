@@ -58,6 +58,10 @@ public class Board extends AbstractUUIDEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private Set<Membership> memberships;
 
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "board_type_id")
+    private BoardType boardType;
+
     public void addComment(Comment comment) {
         if (comment != null) {
             if (comments == null) {

@@ -1,7 +1,6 @@
 package rs.ac.fon.universityboardbackend.web.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 import lombok.Getter;
 import rs.ac.fon.universityboardbackend.web.dto.base.PrivilegeDto;
@@ -11,8 +10,7 @@ import rs.ac.fon.universityboardbackend.web.dto.base.UserProfileBaseDto;
 @Getter
 public class UserProfileCreateDto extends UserProfileBaseDto {
 
-    @NotBlank
-    private final String password;
+    @NotBlank private final String password;
 
     public UserProfileCreateDto(
             String email, RoleDto role, Set<PrivilegeDto> privileges, String password) {
