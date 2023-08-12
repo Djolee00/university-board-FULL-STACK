@@ -30,7 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void saveOrUpdate(Employee employee) {
-        if (employee.getUserProfile() != null) {
+        if (employee.getUserProfile() != null && employee.getUserProfile().getUuid() == null) {
             if (userProfileService.count(
                             new UserProfileSearch().setEmail(employee.getUserProfile().getEmail()))
                     > 0) {
@@ -67,7 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(
                         () ->
                                 new ResourceNotFoundException(
-                                        "Employee with UUUID - " + uuid + " - doesn't exist"));
+                                        "Employee with UUID - " + uuid + " - doesn't exist"));
     }
 
     @Override

@@ -7,7 +7,7 @@ import rs.ac.fon.universityboardbackend.model.employee.AcademicTitle;
 
 @Getter
 @RequiredArgsConstructor
-public abstract class EmployeeBaseDto implements BaseDto {
+public class EmployeeBaseDto implements BaseDto {
 
     @NotNull private final String firstName;
 

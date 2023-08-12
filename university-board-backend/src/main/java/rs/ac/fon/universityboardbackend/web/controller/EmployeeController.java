@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.web.controller;
 
 import jakarta.validation.Valid;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import rs.ac.fon.universityboardbackend.search.domain.EmployeeSearch;
 import rs.ac.fon.universityboardbackend.service.EmployeeService;
 import rs.ac.fon.universityboardbackend.service.PrivilegeService;
 import rs.ac.fon.universityboardbackend.service.RoleService;
+import rs.ac.fon.universityboardbackend.web.dto.base.EmployeeBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.create.EmployeeCreateDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponse;
 import rs.ac.fon.universityboardbackend.web.dto.response.EmployeeResponseDto;
@@ -78,5 +80,20 @@ public class EmployeeController {
         Page<Employee> employees = employeeService.findAll(search, pageable);
         return ResponseEntity.ok(
                 employees.map(EmployeeMapper.INSTANCE::employeeToEmployeeResponseDto));
+    }
+
+    @PatchMapping("/{uuid}")
+    public ResponseEntity<EmployeeResponseDto> updateEmployee(
+            @PathVariable UUID uuid, @RequestBody EmployeeBaseDto employeeBaseDto) {
+        Employee employee = employeeService.findByUuid(uuid);
+
+        Optional.ofNullable(employeeBaseDto.getFirstName()).ifPresent(employee::setFirstName);
+        Optional.ofNullable(employeeBaseDto.getLastName()).ifPresent(employee::setLastName);
+        Optional.ofNullable(employeeBaseDto.getPhoneNumber()).ifPresent(employee::setPhoneNumber);
+        Optional.ofNullable(employeeBaseDto.getAcademicTitle())
+                .ifPresent(employee::setAcademicTitle);
+
+        employeeService.saveOrUpdate(employee);
+        return ResponseEntity.ok(EmployeeMapper.INSTANCE.employeeToEmployeeResponseDto(employee));
     }
 }
