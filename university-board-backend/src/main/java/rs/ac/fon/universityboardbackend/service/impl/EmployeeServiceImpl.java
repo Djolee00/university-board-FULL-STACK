@@ -54,8 +54,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                             }
                         });
             }
-        }
 
+            employee.getUserProfile()
+                    .setPassword(
+                            userProfileService.encryptPassword(
+                                    employee.getUserProfile().getPassword()));
+        }
         employeeRepository.save(employee);
     }
 
