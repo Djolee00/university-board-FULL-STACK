@@ -3,13 +3,12 @@ package rs.ac.fon.universityboardbackend.model.employee;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 import rs.ac.fon.universityboardbackend.model.user.UserProfile;
-
-import java.util.Objects;
 
 @Getter
 @Setter

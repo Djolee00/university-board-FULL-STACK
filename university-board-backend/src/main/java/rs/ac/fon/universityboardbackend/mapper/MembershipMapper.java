@@ -10,5 +10,4 @@ public interface MembershipMapper {
 
     @Mapping(source = "membershipCreateDto.employeeUuid", target = "employee")
     Membership membershipCreateDtoToMembership(MembershipCreateDto membershipCreateDto);
-
 }

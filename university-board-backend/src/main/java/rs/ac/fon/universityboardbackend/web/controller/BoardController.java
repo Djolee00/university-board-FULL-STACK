@@ -2,7 +2,6 @@ package rs.ac.fon.universityboardbackend.web.controller;
 
 import jakarta.validation.Valid;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,8 @@ public class BoardController {
             @RequestBody @Valid BoardCreateDto boardCreateDto) {
 
         Board board = boardMapper.boardCreateDtoToBoard(boardCreateDto);
-        if(board.getBoardType().getUuid() != null){
-            BoardType boardType = boardTypeService.findByUuid(board.getBoardType().getUuid());
+        if (boardCreateDto.getBoardType().uuid() != null) {
+            BoardType boardType = boardTypeService.findByUuid(boardCreateDto.getBoardType().uuid());
             board.setBoardType(boardType);
         }
         board.addMemberships(board.getMemberships());

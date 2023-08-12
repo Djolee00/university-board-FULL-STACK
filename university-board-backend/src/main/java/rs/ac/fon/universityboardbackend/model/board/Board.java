@@ -96,7 +96,7 @@ public class Board extends AbstractUUIDEntity {
     }
 
     public void addMemberships(Set<Membership> memberships) {
-        if(memberships != null){
+        if (memberships != null) {
             this.memberships = new HashSet<>();
             memberships.forEach(this::addMembership);
         }
