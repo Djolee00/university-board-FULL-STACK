@@ -33,4 +33,11 @@ public class CommentController {
         return new ResponseEntity<>(
                 new CreatedResponseDto<>(comment.getUuid()), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/comments/{uuid}")
+    public ResponseEntity<Void> deleteComment(@PathVariable UUID uuid) {
+        Comment comment = commentService.findByUuid(uuid);
+        commentService.delete(comment);
+        return ResponseEntity.noContent().build();
+    }
 }
