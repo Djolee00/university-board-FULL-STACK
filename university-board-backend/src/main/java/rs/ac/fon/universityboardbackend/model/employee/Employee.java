@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 import rs.ac.fon.universityboardbackend.model.user.UserProfile;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -40,4 +42,17 @@ public class Employee extends AbstractUUIDEntity {
 
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     private UserProfile userProfile;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(id, employee.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

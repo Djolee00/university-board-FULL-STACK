@@ -20,7 +20,7 @@ import rs.ac.fon.universityboardbackend.model.employee.Employee;
 @Table(name = "membership")
 public class Membership extends AbstractUUIDEntity {
 
-    @EmbeddedId private MembershipId id;
+    @EmbeddedId private MembershipId id = new MembershipId();
 
     @ManyToOne
     @MapsId("boardId")

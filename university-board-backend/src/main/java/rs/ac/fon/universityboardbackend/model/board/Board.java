@@ -95,6 +95,13 @@ public class Board extends AbstractUUIDEntity {
         }
     }
 
+    public void addMemberships(Set<Membership> memberships) {
+        if(memberships != null){
+            this.memberships = new HashSet<>();
+            memberships.forEach(this::addMembership);
+        }
+    }
+
     @Getter
     @RequiredArgsConstructor
     public enum BoardStatus {

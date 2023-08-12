@@ -1,14 +1,14 @@
 package rs.ac.fon.universityboardbackend.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 import rs.ac.fon.universityboardbackend.model.membership.Membership;
+import rs.ac.fon.universityboardbackend.service.EmployeeService;
 import rs.ac.fon.universityboardbackend.web.dto.create.MembershipCreateDto;
 
-@Mapper
+@Mapper(uses = EmployeeService.class, componentModel = "spring")
 public interface MembershipMapper {
 
-    MembershipMapper INSTANCE = Mappers.getMapper(MembershipMapper.class);
-
+    @Mapping(source = "membershipCreateDto.employeeUuid", target = "employee")
     Membership membershipCreateDtoToMembership(MembershipCreateDto membershipCreateDto);
+
 }
