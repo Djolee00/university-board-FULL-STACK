@@ -96,4 +96,11 @@ public class EmployeeController {
         employeeService.saveOrUpdate(employee);
         return ResponseEntity.ok(EmployeeMapper.INSTANCE.employeeToEmployeeResponseDto(employee));
     }
+
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable UUID uuid) {
+        Employee employee = employeeService.findByUuid(uuid);
+        employeeService.delete(employee);
+        return ResponseEntity.noContent().build();
+    }
 }

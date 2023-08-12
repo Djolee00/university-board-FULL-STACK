@@ -71,6 +71,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Employee> findAll(EmployeeSearch search, Pageable pageable) {
         if (search == null) {
             search = new EmployeeSearch();
@@ -84,11 +85,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Employee> findAll(EmployeeSearch search) {
         if (search == null) {
             search = new EmployeeSearch();
         }
 
         return employeeRepository.findAll(new EmployeeJpaSpecification(search));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Employee employee) {
+        employeeRepository.delete(employee);
     }
 }

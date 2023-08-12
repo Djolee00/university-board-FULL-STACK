@@ -16,4 +16,6 @@ public interface EmployeeService {
     Page<Employee> findAll(EmployeeSearch search, Pageable pageable);
 
     List<Employee> findAll(EmployeeSearch search);
+
+    void delete(Employee employee);
 }
