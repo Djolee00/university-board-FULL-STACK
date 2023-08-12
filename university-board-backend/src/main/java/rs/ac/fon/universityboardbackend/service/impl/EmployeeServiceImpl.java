@@ -1,8 +1,12 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
@@ -10,7 +14,9 @@ import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
 import rs.ac.fon.universityboardbackend.model.user.Privilege;
 import rs.ac.fon.universityboardbackend.repository.EmployeeRepository;
+import rs.ac.fon.universityboardbackend.search.domain.EmployeeSearch;
 import rs.ac.fon.universityboardbackend.search.domain.UserProfileSearch;
+import rs.ac.fon.universityboardbackend.search.specification.EmployeeJpaSpecification;
 import rs.ac.fon.universityboardbackend.service.EmployeeService;
 import rs.ac.fon.universityboardbackend.service.UserProfileService;
 
@@ -62,5 +68,27 @@ public class EmployeeServiceImpl implements EmployeeService {
                         () ->
                                 new ResourceNotFoundException(
                                         "Employee with UUUID - " + uuid + " - doesn't exist"));
+    }
+
+    @Override
+    public Page<Employee> findAll(EmployeeSearch search, Pageable pageable) {
+        if (search == null) {
+            search = new EmployeeSearch();
+        }
+
+        if (pageable == null) {
+            pageable = PageRequest.of(0, Integer.MAX_VALUE);
+        }
+
+        return employeeRepository.findAll(new EmployeeJpaSpecification(search), pageable);
+    }
+
+    @Override
+    public List<Employee> findAll(EmployeeSearch search) {
+        if (search == null) {
+            search = new EmployeeSearch();
+        }
+
+        return employeeRepository.findAll(new EmployeeJpaSpecification(search));
     }
 }

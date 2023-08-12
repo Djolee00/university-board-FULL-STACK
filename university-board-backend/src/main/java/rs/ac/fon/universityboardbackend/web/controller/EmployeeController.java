@@ -4,12 +4,16 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.fon.universityboardbackend.mapper.EmployeeMapper;
+import rs.ac.fon.universityboardbackend.model.employee.AcademicTitle;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
 import rs.ac.fon.universityboardbackend.model.user.UserProfile;
+import rs.ac.fon.universityboardbackend.search.domain.EmployeeSearch;
 import rs.ac.fon.universityboardbackend.service.EmployeeService;
 import rs.ac.fon.universityboardbackend.service.PrivilegeService;
 import rs.ac.fon.universityboardbackend.service.RoleService;
@@ -54,5 +58,25 @@ public class EmployeeController {
         EmployeeResponseDto employeeResponseDto =
                 EmployeeMapper.INSTANCE.employeeToEmployeeResponseDto(employee);
         return ResponseEntity.ok(employeeResponseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<EmployeeResponseDto>> getEmployees(
+            @RequestParam(required = false) String firstNameLike,
+            @RequestParam(required = false) String lastNameLike,
+            @RequestParam(required = false) String phoneNumberLike,
+            @RequestParam(required = false) AcademicTitle academicTitle,
+            Pageable pageable) {
+
+        EmployeeSearch search =
+                new EmployeeSearch()
+                        .setFirstName(firstNameLike)
+                        .setLastName(lastNameLike)
+                        .setPhoneNumber(phoneNumberLike)
+                        .setAcademicTitle(academicTitle);
+
+        Page<Employee> employees = employeeService.findAll(search, pageable);
+        return ResponseEntity.ok(
+                employees.map(EmployeeMapper.INSTANCE::employeeToEmployeeResponseDto));
     }
 }
