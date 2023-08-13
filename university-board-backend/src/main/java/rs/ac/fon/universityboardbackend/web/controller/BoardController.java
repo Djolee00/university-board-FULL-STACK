@@ -9,13 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.mapper.BoardMapper;
+import rs.ac.fon.universityboardbackend.mapper.MembershipMapper;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.board.BoardType;
 import rs.ac.fon.universityboardbackend.model.membership.Membership;
 import rs.ac.fon.universityboardbackend.service.BoardService;
 import rs.ac.fon.universityboardbackend.service.BoardTypeService;
 import rs.ac.fon.universityboardbackend.web.dto.base.BoardBaseDto;
+import rs.ac.fon.universityboardbackend.web.dto.base.MembershipBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.create.BoardCreateDto;
+import rs.ac.fon.universityboardbackend.web.dto.create.MembershipCreateDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponseDto;
 
 @RestController
@@ -24,6 +27,7 @@ import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponseDto;
 public class BoardController {
 
     private final BoardMapper boardMapper;
+    private final MembershipMapper membershipMapper;
     private final BoardTypeService boardTypeService;
     private final BoardService boardService;
 
@@ -84,6 +88,44 @@ public class BoardController {
                                                         + " - doesn't exist"));
 
         board.getMemberships().remove(membership);
+        boardService.saveOrUpdate(board);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{boardUuid}/memberships")
+    public ResponseEntity<Void> addMembership(
+            @PathVariable UUID boardUuid,
+            @RequestBody @Valid MembershipCreateDto membershipCreateDto) {
+        Board board = boardService.findByUuid(boardUuid);
+        Membership membership =
+                membershipMapper.membershipCreateDtoToMembership(membershipCreateDto);
+
+        board.addMembership(membership);
+        boardService.saveOrUpdate(board);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{boardUuid}/memberships/{uuid}")
+    public ResponseEntity<Void> updateMembership(
+            @PathVariable UUID boardUuid,
+            @PathVariable UUID uuid,
+            @RequestBody MembershipBaseDto membershipBaseDto) {
+        Board board = boardService.findByUuid(boardUuid);
+        Membership membership =
+                board.getMemberships().stream()
+                        .filter(m -> m.getUuid().equals(uuid))
+                        .findFirst()
+                        .orElseThrow(
+                                () ->
+                                        new ResourceNotFoundException(
+                                                "Membership with UUID - "
+                                                        + uuid
+                                                        + " - doesn't exist"));
+
+        Optional.ofNullable(membershipBaseDto.getCommencementDate())
+                .ifPresent(membership::setCommencementDate);
+        Optional.ofNullable(membershipBaseDto.getStatus()).ifPresent(membership::setStatus);
+
         boardService.saveOrUpdate(board);
         return ResponseEntity.ok().build();
     }

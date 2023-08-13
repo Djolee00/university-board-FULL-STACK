@@ -59,7 +59,11 @@ public class Membership extends AbstractUUIDEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Membership that = (Membership) o;
-        return Objects.equals(id, that.id) && Objects.equals(board, that.board) && Objects.equals(employee, that.employee) && Objects.equals(commencementDate, that.commencementDate) && status == that.status;
+        return Objects.equals(id, that.id)
+                && Objects.equals(board, that.board)
+                && Objects.equals(employee, that.employee)
+                && Objects.equals(commencementDate, that.commencementDate)
+                && status == that.status;
     }
 
     @Override

@@ -11,7 +11,7 @@ import rs.ac.fon.universityboardbackend.model.membership.Membership.MembershipSt
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class MembershipBaseDto implements BaseDto {
+public class MembershipBaseDto implements BaseDto {
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     protected LocalDate commencementDate;

@@ -51,6 +51,15 @@ public class BoardServiceImpl implements BoardService {
                                 throw new ValidationException(
                                         "One employee can not have more that 1 membership in board");
                             existingEmployees.add(membership.getEmployee());
+
+                            if (membership.getCommencementDate().isBefore(board.getStartDate())
+                                    || membership
+                                            .getCommencementDate()
+                                            .isAfter(board.getEndDate())) {
+                                throw new ValidationException(
+                                        "Invalid commencement date for employee with UUID - "
+                                                + membership.getEmployee().getUuid());
+                            }
                         });
     }
 }
