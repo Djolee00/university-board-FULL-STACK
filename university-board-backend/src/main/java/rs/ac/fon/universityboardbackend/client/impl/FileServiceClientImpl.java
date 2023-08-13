@@ -4,6 +4,7 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,26 @@ public class FileServiceClientImpl implements FileServiceClient {
             } else {
                 throw new FileServiceException("File Service encountered problem");
             }
+        } catch (Exception e) {
+            throw new FileServiceException("File Service encountered problem", e);
+        }
+    }
+
+    @Override
+    public Resource downloadFile(UUID folderUuid, UUID fileUuid) {
+        try {
+            return webClient
+                    .get()
+                    .uri(
+                            uriBuilder ->
+                                    uriBuilder
+                                            .path("/download")
+                                            .queryParam("fileUuid", fileUuid)
+                                            .queryParam("folderUuid", folderUuid)
+                                            .build())
+                    .retrieve()
+                    .bodyToMono(Resource.class)
+                    .block();
         } catch (Exception e) {
             throw new FileServiceException("File Service encountered problem", e);
         }

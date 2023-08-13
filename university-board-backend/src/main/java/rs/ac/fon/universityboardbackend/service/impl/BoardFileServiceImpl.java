@@ -2,10 +2,12 @@ package rs.ac.fon.universityboardbackend.service.impl;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import rs.ac.fon.universityboardbackend.client.FileServiceClient;
+import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.board.BoardFile;
 import rs.ac.fon.universityboardbackend.repository.BoardFileRepository;
@@ -30,5 +32,21 @@ public class BoardFileServiceImpl implements BoardFileService {
         boardFile.setUuid(fileUuid);
         boardFileRepository.save(boardFile);
         return boardFile;
+    }
+
+    @Override
+    public Resource downloadFile(BoardFile boardFile) {
+        return fileServiceClient.downloadFile(boardFile.getBoard().getUuid(), boardFile.getUuid());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BoardFile findByUuid(UUID uuid) {
+        return boardFileRepository
+                .findByUuid(uuid)
+                .orElseThrow(
+                        () ->
+                                new ResourceNotFoundException(
+                                        "Board File with UUID - " + uuid + " - doesn't exist"));
     }
 }
