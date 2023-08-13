@@ -105,8 +105,12 @@ public class FileController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> delete(
             @RequestParam("folderUuid") @NotNull UUID folderUuid,
-            @RequestParam("fileUuid") @NotNull UUID fileUuid)
+            @RequestParam("fileUuid") @NotNull UUID fileUuid,
+            @RequestParam(value = "fileName", required = false) String fileName )
             throws FileDeletionException {
+        if(fileName != null){
+            fileService.deleteFileLocally(fileName);
+        }
         fileService.deleteFile(folderUuid, fileUuid);
         APIResponse apiResponse =
                 APIResponse.builder().message("File deleted!").isSuccessful(true).statusCode(200).build();
