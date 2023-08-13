@@ -49,4 +49,13 @@ public class BoardFileServiceImpl implements BoardFileService {
                                 new ResourceNotFoundException(
                                         "Board File with UUID - " + uuid + " - doesn't exist"));
     }
+
+    @Override
+    @Transactional
+    public void updateFile(BoardFile boardFile, MultipartFile file) {
+        fileServiceClient.updateFile(file, boardFile.getBoard().getUuid(), boardFile.getUuid());
+        boardFile.setType(file.getContentType());
+        boardFile.setOriginalName(file.getOriginalFilename());
+        boardFileRepository.save(boardFile);
+    }
 }

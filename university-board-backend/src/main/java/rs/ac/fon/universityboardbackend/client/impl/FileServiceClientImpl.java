@@ -32,10 +32,10 @@ public class FileServiceClientImpl implements FileServiceClient {
     }
 
     @Override
-    public UUID uploadFile(MultipartFile file, UUID folerUuid) {
+    public UUID uploadFile(MultipartFile file, UUID folderUuid) {
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", file.getResource());
-        builder.part("folderUuid", folerUuid.toString());
+        builder.part("folderUuid", folderUuid.toString());
 
         try {
             FileServiceResponse response =
@@ -72,6 +72,31 @@ public class FileServiceClientImpl implements FileServiceClient {
                     .retrieve()
                     .bodyToMono(Resource.class)
                     .block();
+        } catch (Exception e) {
+            throw new FileServiceException("File Service encountered problem", e);
+        }
+    }
+
+    @Override
+    public void updateFile(MultipartFile file, UUID folderUuid, UUID fileUuid) {
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        builder.part("file", file.getResource());
+        builder.part("folderUuid", folderUuid.toString());
+        builder.part("fileUuid", fileUuid.toString());
+
+        try {
+            FileServiceResponse response =
+                    webClient
+                            .post()
+                            .uri("/upload")
+                            .contentType(MediaType.MULTIPART_FORM_DATA)
+                            .body(BodyInserters.fromMultipartData(builder.build()))
+                            .retrieve()
+                            .bodyToMono(FileServiceResponse.class)
+                            .block();
+            if (response == null || !response.isSuccessful()) {
+                throw new FileServiceException("File Service encountered problem");
+            }
         } catch (Exception e) {
             throw new FileServiceException("File Service encountered problem", e);
         }

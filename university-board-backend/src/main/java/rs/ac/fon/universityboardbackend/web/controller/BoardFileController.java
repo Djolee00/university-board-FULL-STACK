@@ -42,4 +42,12 @@ public class BoardFileController {
                         "attachment; filename=\"" + response.getFilename() + "\"")
                 .body(response);
     }
+
+    @PutMapping("/files/{uuid}")
+    public ResponseEntity<BoardFileBaseDto> updateFile(
+            @PathVariable UUID uuid, @RequestParam MultipartFile file) {
+        BoardFile boardFile = boardFileService.findByUuid(uuid);
+        boardFileService.updateFile(boardFile, file);
+        return ResponseEntity.ok(boardFileMapper.boardFileToBoardFileBaseDto(boardFile));
+    }
 }

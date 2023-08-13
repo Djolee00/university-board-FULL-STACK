@@ -13,4 +13,6 @@ public interface BoardFileService {
     Resource downloadFile(BoardFile boardFile);
 
     BoardFile findByUuid(UUID uuid);
+
+    void updateFile(BoardFile boardFile, MultipartFile file);
 }
