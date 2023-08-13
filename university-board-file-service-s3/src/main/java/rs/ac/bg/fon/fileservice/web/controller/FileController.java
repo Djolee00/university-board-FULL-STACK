@@ -109,7 +109,7 @@ public class FileController {
             throws FileDeletionException {
         fileService.deleteFile(folderUuid, fileUuid);
         APIResponse apiResponse =
-                APIResponse.builder().message("File deleted!").statusCode(200).build();
+                APIResponse.builder().message("File deleted!").isSuccessful(true).statusCode(200).build();
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -118,11 +118,11 @@ public class FileController {
         boolean isDeleted = fileService.deleteFileLocally(fileName);
         if (isDeleted) {
             APIResponse apiResponse =
-                    APIResponse.builder().message("file deleted!").statusCode(200).build();
+                    APIResponse.builder().isSuccessful(true).message("file deleted!").statusCode(200).build();
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } else {
             APIResponse apiResponse =
-                    APIResponse.builder().message("file does not exist").statusCode(404).build();
+                    APIResponse.builder().isSuccessful(false).message("file does not exist").statusCode(404).build();
             return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
     }
