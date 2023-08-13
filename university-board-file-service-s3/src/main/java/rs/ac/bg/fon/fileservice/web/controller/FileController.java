@@ -104,8 +104,8 @@ public class FileController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> delete(
-            @RequestParam("folderUuid") @NotNull UUID folderUuid,
-            @RequestParam("fileUuid") @NotNull UUID fileUuid,
+            @RequestParam(value = "folderUuid") @NotNull UUID folderUuid,
+            @RequestParam(value = "fileUuid") @NotNull UUID fileUuid,
             @RequestParam(value = "fileName", required = false) String fileName )
             throws FileDeletionException {
         if(fileName != null){
