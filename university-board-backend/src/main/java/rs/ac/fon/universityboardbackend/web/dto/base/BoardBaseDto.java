@@ -10,7 +10,7 @@ import rs.ac.fon.universityboardbackend.model.board.Board.BoardStatus;
 
 @Getter
 @RequiredArgsConstructor
-public abstract class BoardBaseDto implements BaseDto {
+public class BoardBaseDto implements BaseDto {
 
     @NotBlank protected final String name;
     @NotBlank protected final String description;
