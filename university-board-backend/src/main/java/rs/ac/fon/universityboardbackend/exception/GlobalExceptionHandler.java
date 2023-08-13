@@ -41,6 +41,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(FileServiceException.class)
+    ResponseEntity<ProblemDetail> onFileServiceException(FileServiceException ex) {
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        problemDetail.setTitle("File Service is temporarily unavailable");
+        problemDetail.setType(createExceptionTypeUri(ex.getClass()));
+        problemDetail.setProperty("timestamp", Instant.now());
+
+        return new ResponseEntity<>(problemDetail, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> onMethodArgumentNotValidExceptionI(
             MethodArgumentNotValidException ex) {
