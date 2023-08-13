@@ -101,4 +101,25 @@ public class FileServiceClientImpl implements FileServiceClient {
             throw new FileServiceException("File Service encountered problem", e);
         }
     }
+
+    @Override
+    public void deleteFile(UUID folderUuid, UUID fileUuid, String fileName) {
+        try {
+            webClient
+                    .delete()
+                    .uri(
+                            uriBuilder ->
+                                    uriBuilder
+                                            .path("/delete")
+                                            .queryParam("folderUuid", folderUuid)
+                                            .queryParam("fileUuid", fileUuid)
+                                            .queryParam("fileName", fileName)
+                                            .build())
+                    .retrieve()
+                    .bodyToMono(FileServiceResponse.class)
+                    .block();
+        } catch (Exception e) {
+            throw new FileServiceException("File Service encountered problem", e);
+        }
+    }
 }

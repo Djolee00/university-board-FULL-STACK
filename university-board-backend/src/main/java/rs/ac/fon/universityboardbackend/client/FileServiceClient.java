@@ -11,4 +11,6 @@ public interface FileServiceClient {
     Resource downloadFile(UUID folderUuid, UUID fileUuid);
 
     void updateFile(MultipartFile file, UUID folderUuid, UUID fileUuid);
+
+    void deleteFile(UUID folderUuid, UUID fileUuid, String fileName);
 }

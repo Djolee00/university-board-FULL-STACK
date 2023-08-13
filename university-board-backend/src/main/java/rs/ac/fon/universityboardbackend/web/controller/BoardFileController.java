@@ -50,4 +50,11 @@ public class BoardFileController {
         boardFileService.updateFile(boardFile, file);
         return ResponseEntity.ok(boardFileMapper.boardFileToBoardFileBaseDto(boardFile));
     }
+
+    @DeleteMapping("/files/{uuid}")
+    public ResponseEntity<Void> deleteFile(@PathVariable UUID uuid) {
+        BoardFile boardFile = boardFileService.findByUuid(uuid);
+        boardFileService.deleteFile(boardFile);
+        return ResponseEntity.ok().build();
+    }
 }

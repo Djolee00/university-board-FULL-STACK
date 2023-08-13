@@ -94,7 +94,7 @@ public class EmployeeController {
                 .ifPresent(employee::setAcademicTitle);
 
         employeeService.saveOrUpdate(employee);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{uuid}")

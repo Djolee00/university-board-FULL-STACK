@@ -15,4 +15,6 @@ public interface BoardFileService {
     BoardFile findByUuid(UUID uuid);
 
     void updateFile(BoardFile boardFile, MultipartFile file);
+
+    void deleteFile(BoardFile boardFile);
 }

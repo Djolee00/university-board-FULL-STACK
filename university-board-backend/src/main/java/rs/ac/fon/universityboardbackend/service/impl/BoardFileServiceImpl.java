@@ -58,4 +58,11 @@ public class BoardFileServiceImpl implements BoardFileService {
         boardFile.setOriginalName(file.getOriginalFilename());
         boardFileRepository.save(boardFile);
     }
+
+    @Override
+    public void deleteFile(BoardFile boardFile) {
+        fileServiceClient.deleteFile(
+                boardFile.getBoard().getUuid(), boardFile.getUuid(), boardFile.getOriginalName());
+        boardFileRepository.delete(boardFile);
+    }
 }
