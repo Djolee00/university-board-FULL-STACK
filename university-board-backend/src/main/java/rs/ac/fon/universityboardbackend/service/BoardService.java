@@ -8,4 +8,6 @@ public interface BoardService {
     void saveOrUpdate(Board board);
 
     Board findByUuid(UUID uuid);
+
+    void delete(Board board);
 }

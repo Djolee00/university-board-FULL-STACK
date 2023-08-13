@@ -11,6 +11,7 @@ import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
 import rs.ac.fon.universityboardbackend.repository.BoardRepository;
+import rs.ac.fon.universityboardbackend.service.BoardFileService;
 import rs.ac.fon.universityboardbackend.service.BoardService;
 
 @Service
@@ -18,6 +19,7 @@ import rs.ac.fon.universityboardbackend.service.BoardService;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardFileService boardFileService;
 
     @Override
     @Transactional
@@ -35,6 +37,15 @@ public class BoardServiceImpl implements BoardService {
                         () ->
                                 new ResourceNotFoundException(
                                         "Board with UUID - " + uuid + " - doesn't exist"));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Board board) {
+        if (board.getBoardFiles() != null && !board.getBoardFiles().isEmpty()) {
+            board.getBoardFiles().forEach(boardFileService::deleteFile);
+        }
+        boardRepository.delete(board);
     }
 
     private void boardValidation(Board board) {

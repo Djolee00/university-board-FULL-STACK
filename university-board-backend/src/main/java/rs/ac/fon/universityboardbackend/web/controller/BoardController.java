@@ -71,6 +71,13 @@ public class BoardController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable UUID uuid) {
+        Board board = boardService.findByUuid(uuid);
+        boardService.delete(board);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{boardUuid}/memberships/{uuid}")
     public ResponseEntity<Void> deleteMembership(
             @PathVariable UUID boardUuid, @PathVariable UUID uuid) {
