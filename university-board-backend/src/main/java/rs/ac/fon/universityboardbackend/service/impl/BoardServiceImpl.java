@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.board.Board;
@@ -19,12 +20,14 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
 
     @Override
+    @Transactional
     public void saveOrUpdate(Board board) {
         boardValidation(board);
         boardRepository.save(board);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Board findByUuid(UUID uuid) {
         return boardRepository
                 .findByUuid(uuid)
