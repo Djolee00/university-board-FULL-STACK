@@ -58,7 +58,7 @@ public class Board extends AbstractUUIDEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private Set<BoardFile> boardFiles;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Membership> memberships;
 
     @ManyToOne(cascade = CascadeType.PERSIST)

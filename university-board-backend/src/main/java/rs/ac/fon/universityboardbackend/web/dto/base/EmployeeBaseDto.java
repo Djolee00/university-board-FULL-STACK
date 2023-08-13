@@ -3,18 +3,20 @@ package rs.ac.fon.universityboardbackend.web.dto.base;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import rs.ac.fon.universityboardbackend.model.employee.AcademicTitle;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
 public class EmployeeBaseDto implements BaseDto {
 
-    @NotBlank private final String firstName;
+    @NotBlank private String firstName;
 
-    @NotBlank private final String lastName;
+    @NotBlank private String lastName;
 
-    @NotBlank private final String phoneNumber;
+    @NotBlank private String phoneNumber;
 
-    @NotNull private final AcademicTitle academicTitle;
+    @NotNull private AcademicTitle academicTitle;
 }

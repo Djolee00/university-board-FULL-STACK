@@ -4,12 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
 public abstract class UserProfileBaseDto implements BaseDto {
-    @NotBlank protected final String email;
-    @NotNull protected final RoleDto role;
-    protected final Set<PrivilegeDto> privileges;
+    @NotBlank protected String email;
+    @NotNull protected RoleDto role;
+    protected Set<PrivilegeDto> privileges;
 }

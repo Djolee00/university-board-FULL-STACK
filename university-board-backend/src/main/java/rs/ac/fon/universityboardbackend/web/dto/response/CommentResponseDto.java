@@ -1,18 +1,16 @@
 package rs.ac.fon.universityboardbackend.web.dto.response;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import rs.ac.fon.universityboardbackend.web.dto.base.CommentBaseDto;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class CommentResponseDto extends CommentBaseDto {
 
-    @NotNull private final UUID uuid;
-
-    public CommentResponseDto(String title, @NotBlank String description, UUID uuid) {
-        super(title, description);
-        this.uuid = uuid;
-    }
+    @NotNull private UUID uuid;
 }

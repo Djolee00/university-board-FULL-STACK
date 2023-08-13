@@ -3,13 +3,15 @@ package rs.ac.fon.universityboardbackend.web.dto.base;
 import jakarta.validation.constraints.NotBlank;
 import java.time.OffsetDateTime;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
 public class CommentBaseDto implements BaseDto {
 
-    private final String title;
-    @NotBlank private final String description;
-    private final OffsetDateTime time = OffsetDateTime.now();
+    private String title;
+    @NotBlank private String description;
+    private OffsetDateTime time = OffsetDateTime.now();
 }

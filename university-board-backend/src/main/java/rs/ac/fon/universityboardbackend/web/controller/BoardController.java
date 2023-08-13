@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.mapper.BoardMapper;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.board.BoardType;
+import rs.ac.fon.universityboardbackend.model.membership.Membership;
 import rs.ac.fon.universityboardbackend.service.BoardService;
 import rs.ac.fon.universityboardbackend.service.BoardTypeService;
 import rs.ac.fon.universityboardbackend.web.dto.base.BoardBaseDto;
@@ -61,6 +63,27 @@ public class BoardController {
         Optional.ofNullable(boardBaseDto.getStartDate()).ifPresent(board::setStartDate);
         Optional.ofNullable(boardBaseDto.getEndDate()).ifPresent(board::setEndDate);
 
+        boardService.saveOrUpdate(board);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{boardUuid}/memberships/{uuid}")
+    public ResponseEntity<Void> deleteMembership(
+            @PathVariable UUID boardUuid, @PathVariable UUID uuid) {
+        Board board = boardService.findByUuid(boardUuid);
+
+        Membership membership =
+                board.getMemberships().stream()
+                        .filter(m -> m.getUuid().equals(uuid))
+                        .findFirst()
+                        .orElseThrow(
+                                () ->
+                                        new ResourceNotFoundException(
+                                                "Membership with UUID - "
+                                                        + uuid
+                                                        + " - doesn't exist"));
+
+        board.getMemberships().remove(membership);
         boardService.saveOrUpdate(board);
         return ResponseEntity.ok().build();
     }
