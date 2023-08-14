@@ -13,4 +13,7 @@ import rs.ac.fon.universityboardbackend.web.dto.base.CommentBaseDto;
 public class CommentResponseDto extends CommentBaseDto {
 
     @NotNull private UUID uuid;
+    @NotNull private String email;
+    @NotNull private String firstName;
+    @NotNull private String lastName;
 }

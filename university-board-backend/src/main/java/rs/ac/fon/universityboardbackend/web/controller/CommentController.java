@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.web.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,10 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable UUID uuid, @RequestBody CommentBaseDto commentBaseDto) {
         Comment comment = commentService.findByUuid(uuid);
+        UserProfile userProfile = userProfileService.getLoggedUser();
+        if (!userProfile.getUsername().equals(comment.getUserProfile().getUsername())) {
+            throw new ValidationException("Comments can be edited only by those who made them");
+        }
         Optional.ofNullable(commentBaseDto.getTitle()).ifPresent(comment::setTitle);
         Optional.ofNullable(commentBaseDto.getDescription()).ifPresent(comment::setDescription);
         commentService.saveOrUpdate(comment);
