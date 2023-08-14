@@ -1,5 +1,6 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,10 @@ public class BoardTypeServiceImpl implements BoardTypeService {
                         () ->
                                 new ResourceNotFoundException(
                                         "Board Type with UUID - " + uuid + " - doesn't exist"));
+    }
+
+    @Override
+    public List<BoardType> findAll() {
+        return boardTypeRepository.findAll();
     }
 }
