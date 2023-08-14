@@ -102,6 +102,12 @@ public class BoardController {
         return ResponseEntity.ok(boards.map(boardMapper::boardToBoardResponseDto));
     }
 
+    @GetMapping("/{uuid}")
+    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable UUID uuid) {
+        Board board = boardService.findByUuid(uuid);
+        return ResponseEntity.ok(boardMapper.boardToBoardResponseDto(board));
+    }
+
     @DeleteMapping("/{boardUuid}/memberships/{uuid}")
     public ResponseEntity<Void> deleteMembership(
             @PathVariable UUID boardUuid, @PathVariable UUID uuid) {
