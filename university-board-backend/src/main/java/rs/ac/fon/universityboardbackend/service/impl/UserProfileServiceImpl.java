@@ -1,11 +1,11 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
@@ -17,11 +17,16 @@ import rs.ac.fon.universityboardbackend.search.specification.UserProfileJpaSpeci
 import rs.ac.fon.universityboardbackend.service.UserProfileService;
 
 @Service
-@RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserProfileServiceImpl(
+            UserProfileRepository userProfileRepository, @Lazy PasswordEncoder passwordEncoder) {
+        this.userProfileRepository = userProfileRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional(readOnly = true)
