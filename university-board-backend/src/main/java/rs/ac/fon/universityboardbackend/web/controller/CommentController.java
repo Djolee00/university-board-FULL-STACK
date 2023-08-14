@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import rs.ac.fon.universityboardbackend.mapper.CommentMapper;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.board.Comment;
+import rs.ac.fon.universityboardbackend.model.user.UserProfile;
 import rs.ac.fon.universityboardbackend.service.BoardService;
 import rs.ac.fon.universityboardbackend.service.CommentService;
+import rs.ac.fon.universityboardbackend.service.UserProfileService;
 import rs.ac.fon.universityboardbackend.web.dto.base.CommentBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.CommentResponseDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponseDto;
@@ -23,12 +25,15 @@ public class CommentController {
     private final BoardService boardService;
     private final CommentMapper commentMapper;
     private final CommentService commentService;
+    private final UserProfileService userProfileService;
 
     @PostMapping("/{boardUuid}/comments")
     public ResponseEntity<CreatedResponseDto<UUID>> createComment(
             @PathVariable UUID boardUuid, @RequestBody @Valid CommentBaseDto commentBaseDto) {
         Board board = boardService.findByUuid(boardUuid);
+        UserProfile userProfile = userProfileService.getLoggedUser();
         Comment comment = commentMapper.commentBaseDtoToComment(commentBaseDto);
+        comment.setUserProfile(userProfile);
         comment.setBoard(board);
 
         commentService.saveOrUpdate(comment);

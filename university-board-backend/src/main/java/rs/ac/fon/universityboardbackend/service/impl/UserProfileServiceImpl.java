@@ -2,6 +2,7 @@ package rs.ac.fon.universityboardbackend.service.impl;
 
 import java.util.UUID;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -78,5 +79,27 @@ public class UserProfileServiceImpl implements UserProfileService {
                                                         + " - not found"));
             }
         };
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserProfile getLoggedUser() {
+        Object userDetails = null;
+        if (SecurityContextHolder.getContext() != null
+                && SecurityContextHolder.getContext().getAuthentication() != null) {
+            userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        }
+        UserProfile user = null;
+
+        if (userDetails instanceof UserDetails) {
+            final String username = ((UserDetails) userDetails).getUsername();
+            user = userProfileRepository.findByEmail(username).orElseThrow(()-> new ResourceNotFoundException("User with email - " + username + " - doesn't exist"));
+        }
+
+        if (user == null) {
+            throw new ValidationException("You must be logged in");
+        }
+
+        return user;
     }
 }

@@ -16,4 +16,6 @@ public interface UserProfileService {
     String encryptPassword(String password);
 
     UserDetailsService userDetailsService();
+
+    UserProfile getLoggedUser();
 }
