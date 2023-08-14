@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +15,16 @@ import rs.ac.fon.universityboardbackend.mapper.MembershipMapper;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.board.BoardType;
 import rs.ac.fon.universityboardbackend.model.membership.Membership;
+import rs.ac.fon.universityboardbackend.search.domain.BoardSearch;
 import rs.ac.fon.universityboardbackend.service.BoardService;
 import rs.ac.fon.universityboardbackend.service.BoardTypeService;
 import rs.ac.fon.universityboardbackend.web.dto.base.BoardBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.base.MembershipBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.create.BoardCreateDto;
 import rs.ac.fon.universityboardbackend.web.dto.create.MembershipCreateDto;
+import rs.ac.fon.universityboardbackend.web.dto.response.BoardResponseDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponseDto;
+import rs.ac.fon.universityboardbackend.web.dto.search.GetBoardDto;
 
 @RestController
 @RequestMapping("/boards")
@@ -76,6 +81,25 @@ public class BoardController {
         Board board = boardService.findByUuid(uuid);
         boardService.delete(board);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<BoardResponseDto>> getBoards(
+            GetBoardDto searchDto, Pageable pageable) {
+        BoardSearch boardSearch =
+                new BoardSearch()
+                        .setNameLike(searchDto.nameLike())
+                        .setStartDateFrom(searchDto.startDateFrom())
+                        .setEndDateTo(searchDto.endDateTo())
+                        .setStatus(searchDto.status());
+
+        if (searchDto.boardTypeUuid() != null) {
+            boardSearch.setBoardType(boardTypeService.findByUuid(searchDto.boardTypeUuid()));
+        }
+
+        Page<Board> boards = boardService.findAll(boardSearch, pageable);
+
+        return ResponseEntity.ok(boards.map(boardMapper::boardToBoardResponseDto));
     }
 
     @DeleteMapping("/{boardUuid}/memberships/{uuid}")

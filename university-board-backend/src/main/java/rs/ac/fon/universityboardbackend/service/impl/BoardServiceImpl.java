@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
@@ -11,6 +14,8 @@ import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
 import rs.ac.fon.universityboardbackend.repository.BoardRepository;
+import rs.ac.fon.universityboardbackend.search.domain.BoardSearch;
+import rs.ac.fon.universityboardbackend.search.specification.BoardJpaSpecification;
 import rs.ac.fon.universityboardbackend.service.BoardFileService;
 import rs.ac.fon.universityboardbackend.service.BoardService;
 
@@ -46,6 +51,20 @@ public class BoardServiceImpl implements BoardService {
             board.getBoardFiles().forEach(boardFileService::deleteFile);
         }
         boardRepository.delete(board);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Board> findAll(BoardSearch boardSearch, Pageable pageable) {
+        if (boardSearch == null) {
+            boardSearch = new BoardSearch();
+        }
+
+        if (pageable == null) {
+            pageable = PageRequest.of(0, Integer.MAX_VALUE);
+        }
+
+        return boardRepository.findAll(new BoardJpaSpecification(boardSearch), pageable);
     }
 
     private void boardValidation(Board board) {
