@@ -1,5 +1,6 @@
 package rs.ac.fon.universityboardbackend.service;
 
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface BoardService {
     void delete(Board board);
 
     Page<Board> findAll(BoardSearch boardSearch, Pageable pageable);
+
+    List<Board> findAll(BoardSearch boardSearch);
 }

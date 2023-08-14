@@ -1,6 +1,7 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,16 @@ public class BoardServiceImpl implements BoardService {
         }
 
         return boardRepository.findAll(new BoardJpaSpecification(boardSearch), pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Board> findAll(BoardSearch boardSearch) {
+        if (boardSearch == null) {
+            boardSearch = new BoardSearch();
+        }
+
+        return boardRepository.findAll(new BoardJpaSpecification(boardSearch));
     }
 
     private void boardValidation(Board board) {
