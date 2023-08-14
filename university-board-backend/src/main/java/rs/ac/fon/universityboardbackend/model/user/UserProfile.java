@@ -3,11 +3,15 @@ package rs.ac.fon.universityboardbackend.model.user;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import rs.ac.fon.universityboardbackend.model.AbstractUUIDEntity;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
 
@@ -16,7 +20,7 @@ import rs.ac.fon.universityboardbackend.model.employee.Employee;
 @Accessors(chain = true)
 @Entity
 @Table(name = "user_profile")
-public class UserProfile extends AbstractUUIDEntity {
+public class UserProfile extends AbstractUUIDEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,5 +58,35 @@ public class UserProfile extends AbstractUUIDEntity {
             }
             privileges.add(privilege);
         }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

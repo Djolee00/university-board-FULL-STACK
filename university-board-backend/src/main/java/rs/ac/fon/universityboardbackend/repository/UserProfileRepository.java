@@ -13,4 +13,6 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     long count(Specification<UserProfile> search);
 
     Optional<UserProfile> findByUuid(UUID uuid);
+
+    Optional<UserProfile> findByEmail(String email);
 }

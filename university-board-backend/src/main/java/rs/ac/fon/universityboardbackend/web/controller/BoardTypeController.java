@@ -1,5 +1,7 @@
 package rs.ac.fon.universityboardbackend.web.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +12,6 @@ import rs.ac.fon.universityboardbackend.model.board.BoardType;
 import rs.ac.fon.universityboardbackend.service.BoardTypeService;
 import rs.ac.fon.universityboardbackend.web.dto.base.BoardTypeDto;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/board-types")
@@ -21,8 +20,11 @@ public class BoardTypeController {
     private final BoardTypeService boardTypeService;
 
     @GetMapping
-    public ResponseEntity<List<BoardTypeDto>> getAllBoardTypes(){
+    public ResponseEntity<List<BoardTypeDto>> getAllBoardTypes() {
         List<BoardType> boardTypes = boardTypeService.findAll();
-        return ResponseEntity.ok(boardTypes.stream().map(BoardTypeMapper.INSTANCE::boardTypeToBoardTypeDto).collect(Collectors.toList()));
+        return ResponseEntity.ok(
+                boardTypes.stream()
+                        .map(BoardTypeMapper.INSTANCE::boardTypeToBoardTypeDto)
+                        .collect(Collectors.toList()));
     }
 }

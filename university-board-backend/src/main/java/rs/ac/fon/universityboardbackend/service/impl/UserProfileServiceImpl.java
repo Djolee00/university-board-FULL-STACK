@@ -2,6 +2,9 @@ package rs.ac.fon.universityboardbackend.service.impl;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,5 +55,23 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public String encryptPassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username)
+                    throws UsernameNotFoundException {
+                return userProfileRepository
+                        .findByEmail(username)
+                        .orElseThrow(
+                                () ->
+                                        new ResourceNotFoundException(
+                                                "User Profile with email - "
+                                                        + username
+                                                        + " - not found"));
+            }
+        };
     }
 }
