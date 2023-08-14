@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class UserProfileBaseDto implements BaseDto {
+public class UserProfileBaseDto implements BaseDto {
     @NotBlank protected String email;
     @NotNull protected RoleDto role;
     protected Set<PrivilegeDto> privileges;
