@@ -16,6 +16,7 @@ import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.employee.Employee;
+import rs.ac.fon.universityboardbackend.model.membership.Membership;
 import rs.ac.fon.universityboardbackend.repository.BoardRepository;
 import rs.ac.fon.universityboardbackend.search.domain.BoardSearch;
 import rs.ac.fon.universityboardbackend.search.specification.BoardJpaSpecification;
@@ -35,11 +36,12 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public void saveOrUpdate(Board board) {
         boardValidation(board);
-        final boolean create = board.getUuid() == null;
+        final List<Membership> memberships =
+                board.getMemberships().stream()
+                        .filter(membership -> membership.getUuid() == null)
+                        .toList();
         boardRepository.save(board);
-        if (create) {
-            sendBoardWelcomeMail(board);
-        }
+        sendBoardWelcomeMail(memberships);
     }
 
     @Override
@@ -112,17 +114,19 @@ public class BoardServiceImpl implements BoardService {
                         });
     }
 
-    private void sendBoardWelcomeMail(Board board) {
-        board.getMemberships()
-                .forEach(
-                        membership -> {
-                            try {
-                                emailService.sendBoardWelcomeMail(
-                                        membership.getEmployee().getUserProfile(), board);
-                            } catch (MessagingException e) {
-                                throw new MailServiceException(
-                                        "Error while sending board creation mail", e);
-                            }
-                        });
+    private void sendBoardWelcomeMail(List<Membership> memberships) {
+        if (memberships == null || memberships.isEmpty()) {
+            return;
+        }
+        memberships.forEach(
+                membership -> {
+                    try {
+                        emailService.sendBoardWelcomeMail(
+                                membership.getEmployee().getUserProfile(), membership.getBoard());
+                    } catch (MessagingException e) {
+                        throw new MailServiceException(
+                                "Error while sending board creation mail", e);
+                    }
+                });
     }
 }
