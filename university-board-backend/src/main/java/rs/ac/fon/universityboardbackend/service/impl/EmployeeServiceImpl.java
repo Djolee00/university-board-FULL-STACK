@@ -47,7 +47,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
         if (generatedPassword != null) {
             try {
-                emailService.sendWelcomeMail(employee.getUserProfile(), generatedPassword);
+                emailService.sendApplicationWelcomeMail(
+                        employee.getUserProfile(), generatedPassword);
             } catch (MessagingException e) {
                 throw new MailServiceException("Error while sending welcome mail", e);
             }

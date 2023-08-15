@@ -1,5 +1,6 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
+import jakarta.mail.MessagingException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.fon.universityboardbackend.exception.MailServiceException;
 import rs.ac.fon.universityboardbackend.exception.ResourceNotFoundException;
 import rs.ac.fon.universityboardbackend.exception.ValidationException;
 import rs.ac.fon.universityboardbackend.model.board.Board;
@@ -19,6 +21,7 @@ import rs.ac.fon.universityboardbackend.search.domain.BoardSearch;
 import rs.ac.fon.universityboardbackend.search.specification.BoardJpaSpecification;
 import rs.ac.fon.universityboardbackend.service.BoardFileService;
 import rs.ac.fon.universityboardbackend.service.BoardService;
+import rs.ac.fon.universityboardbackend.service.EmailService;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +29,17 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardFileService boardFileService;
+    private final EmailService emailService;
 
     @Override
     @Transactional
     public void saveOrUpdate(Board board) {
         boardValidation(board);
+        final boolean create = board.getUuid() == null;
         boardRepository.save(board);
+        if (create) {
+            sendBoardWelcomeMail(board);
+        }
     }
 
     @Override
@@ -100,6 +108,20 @@ public class BoardServiceImpl implements BoardService {
                                 throw new ValidationException(
                                         "Invalid commencement date for employee with UUID - "
                                                 + membership.getEmployee().getUuid());
+                            }
+                        });
+    }
+
+    private void sendBoardWelcomeMail(Board board) {
+        board.getMemberships()
+                .forEach(
+                        membership -> {
+                            try {
+                                emailService.sendBoardWelcomeMail(
+                                        membership.getEmployee().getUserProfile(), board);
+                            } catch (MessagingException e) {
+                                throw new MailServiceException(
+                                        "Error while sending board creation mail", e);
                             }
                         });
     }
