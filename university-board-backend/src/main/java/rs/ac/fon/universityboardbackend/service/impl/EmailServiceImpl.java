@@ -118,4 +118,28 @@ public class EmailServiceImpl implements EmailService {
 
         javaMailSender.send(message);
     }
+
+    @Override
+    public void sendCommencementEmail(UserProfile userProfile, Board board)
+            throws MessagingException {
+        Context context = new Context();
+        context.setVariable("board", board);
+        context.setVariable("user", userProfile);
+
+        String emailContent =
+                templateEngine.process(templateProperties.getBoardBeginningTemplateName(), context);
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper =
+                new MimeMessageHelper(
+                        message,
+                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                        StandardCharsets.UTF_8.name());
+
+        helper.setTo(userProfile.getEmail());
+        helper.setSubject("Your duties in Board are about to start");
+        helper.setText(emailContent, true);
+
+        javaMailSender.send(message);
+    }
 }
