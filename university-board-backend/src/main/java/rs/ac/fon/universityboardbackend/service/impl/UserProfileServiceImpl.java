@@ -64,14 +64,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public UserDetailsService userDetailsService() {
-        return username -> userProfileRepository
-                .findByEmail(username)
-                .orElseThrow(
-                        () ->
-                                new ResourceNotFoundException(
-                                        "User Profile with email - "
-                                                + username
-                                                + " - not found"));
+        return username ->
+                userProfileRepository
+                        .findByEmail(username)
+                        .orElseThrow(
+                                () ->
+                                        new ResourceNotFoundException(
+                                                "User Profile with email - "
+                                                        + username
+                                                        + " - not found"));
     }
 
     @Override

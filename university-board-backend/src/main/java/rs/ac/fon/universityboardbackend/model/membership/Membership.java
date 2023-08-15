@@ -1,7 +1,6 @@
 package rs.ac.fon.universityboardbackend.model.membership;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -34,7 +33,6 @@ public class Membership extends AbstractUUIDEntity {
     private Employee employee;
 
     @NotNull
-    @FutureOrPresent
     @Column(name = "commencement_date")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate commencementDate;

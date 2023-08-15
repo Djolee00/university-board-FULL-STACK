@@ -1,7 +1,6 @@
 package rs.ac.fon.universityboardbackend.model.board;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -36,13 +35,11 @@ public class Board extends AbstractUUIDEntity {
     private String description;
 
     @NotNull
-    @FutureOrPresent
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "start_date")
     private LocalDate startDate;
 
     @NotNull
-    @FutureOrPresent
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "end_date")
     private LocalDate endDate;
