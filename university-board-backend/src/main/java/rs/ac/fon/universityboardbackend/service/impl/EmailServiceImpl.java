@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import rs.ac.fon.universityboardbackend.model.board.Board;
+import rs.ac.fon.universityboardbackend.model.board.Comment;
 import rs.ac.fon.universityboardbackend.model.user.UserProfile;
 import rs.ac.fon.universityboardbackend.service.EmailService;
 
@@ -20,16 +21,19 @@ public class EmailServiceImpl implements EmailService {
     private final TemplateEngine templateEngine;
     private static String WELCOME_TEMPLATE_NAME;
     private static String BOARD_WELCOME_TEMPLATE_NAME;
+    private static String NEW_COMMENT_TEMPLATE_NAME;
 
     public EmailServiceImpl(
             JavaMailSender javaMailSender,
             TemplateEngine templateEngine,
             @Value("${email.welcome.template}") String welcomeTemplate,
-            @Value("${board.welcome.template}") String boardWelcomeTemplate) {
+            @Value("${board.welcome.template}") String boardWelcomeTemplate,
+            @Value("${new.comment.template}") String newCommentTemplate) {
         this.javaMailSender = javaMailSender;
         this.templateEngine = templateEngine;
         WELCOME_TEMPLATE_NAME = welcomeTemplate;
         BOARD_WELCOME_TEMPLATE_NAME = boardWelcomeTemplate;
+        NEW_COMMENT_TEMPLATE_NAME = newCommentTemplate;
     }
 
     @Override
@@ -73,6 +77,29 @@ public class EmailServiceImpl implements EmailService {
 
         helper.setTo(userProfile.getEmail());
         helper.setSubject("You have been added to new Board");
+        helper.setText(emailContent, true);
+
+        javaMailSender.send(message);
+    }
+
+    @Override
+    public void sendNewCommentMail(UserProfile userProfile, Comment comment)
+            throws MessagingException {
+        Context context = new Context();
+        context.setVariable("comment", comment);
+        context.setVariable("user", userProfile);
+
+        String emailContent = templateEngine.process(NEW_COMMENT_TEMPLATE_NAME, context);
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper =
+                new MimeMessageHelper(
+                        message,
+                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                        StandardCharsets.UTF_8.name());
+
+        helper.setTo(userProfile.getEmail());
+        helper.setSubject("You have new comment in Board");
         helper.setText(emailContent, true);
 
         javaMailSender.send(message);
