@@ -13,4 +13,6 @@ public interface EmailService {
     void sendBoardWelcomeMail(UserProfile userProfile, Board board) throws MessagingException;
 
     void sendNewCommentMail(UserProfile userProfile, Comment comment) throws MessagingException;
+
+    void sendBoardBeginningEmail(UserProfile userProfile, Board board) throws MessagingException;
 }
