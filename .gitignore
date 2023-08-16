@@ -73,3 +73,26 @@ university-board-backend/mvnw.cmd
 university-board-backend/.mvn/wrapper/maven-wrapper.jar
 university-board-backend/.mvn/wrapper/maven-wrapper.properties
 
+######FRONTEND#######
+
+# dependencies
+university-board-frontend/node_modules
+university-board-frontend/.pnp
+university-board-frontend/.pnp.js
+
+# testing
+university-board-frontend/coverage
+
+# production
+university-board-frontend/build
+
+# misc
+university-board-frontend/.DS_Store
+university-board-frontend/.env.local
+university-board-frontend/.env.development.local
+university-board-frontend/.env.test.local
+university-board-frontend/.env.production.local
+
+university-board-frontend/npm-debug.log*
+university-board-frontend/yarn-debug.log*
+university-board-frontend/yarn-error.log*
