@@ -2,19 +2,21 @@ package rs.ac.fon.universityboardbackend.web.controller;
 
 import jakarta.validation.Valid;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.fon.universityboardbackend.model.user.UserProfile;
+import rs.ac.fon.universityboardbackend.service.AuthorizationService;
 import rs.ac.fon.universityboardbackend.service.UserProfileService;
 import rs.ac.fon.universityboardbackend.web.dto.patch.UserProfilePatchDto;
 
 @RestController
 @RequestMapping("/user-profiles")
-@RequiredArgsConstructor
-public class UserProfileController {
+public class UserProfileController extends AbstractController {
 
-    private final UserProfileService userProfileService;
+    public UserProfileController(
+            AuthorizationService authorizationService, UserProfileService userProfileService) {
+        super(authorizationService, userProfileService);
+    }
 
     @PatchMapping("/{uuid}")
     public ResponseEntity<Void> updatePassword(

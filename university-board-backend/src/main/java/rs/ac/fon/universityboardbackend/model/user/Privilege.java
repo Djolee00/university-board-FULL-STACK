@@ -35,7 +35,6 @@ public class Privilege {
         FILE_DOWN("File Download"),
         FILE_UP("File Upload"),
         COMMENT_D("Delete Comment"),
-        COMMENT_R("Read Comments"),
         COMMENT_W("Write Comment");
         private final String description;
     }

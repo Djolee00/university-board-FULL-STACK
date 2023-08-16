@@ -8,8 +8,8 @@ import rs.ac.fon.universityboardbackend.service.UserProfileService;
 @RequiredArgsConstructor
 public abstract class AbstractController {
 
-    private final AuthorizationService authorizationService;
-    private final UserProfileService userProfileService;
+    protected final AuthorizationService authorizationService;
+    protected final UserProfileService userProfileService;
 
     public void hasPrivilegeOrThrow(PrivilegeCode... privileges) {
         authorizationService.hasPrivilegeOrThrow(userProfileService.getLoggedUser(), privileges);
