@@ -1,5 +1,6 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,5 +25,10 @@ public class PrivilegeServiceImpl implements PrivilegeService {
                         () ->
                                 new ResourceNotFoundException(
                                         "Privilege with code - " + code + " - doesn't exist"));
+    }
+
+    @Override
+    public List<Privilege> getAll() {
+        return privilegeRepository.findAll();
     }
 }

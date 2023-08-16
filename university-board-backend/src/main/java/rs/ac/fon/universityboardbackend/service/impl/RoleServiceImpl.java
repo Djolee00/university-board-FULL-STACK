@@ -1,5 +1,6 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,11 @@ public class RoleServiceImpl implements RoleService {
                         () ->
                                 new ResourceNotFoundException(
                                         "Role with UUID - " + uuid + " - doesn't exist"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Role> getAll() {
+        return roleRepository.findAll();
     }
 }
