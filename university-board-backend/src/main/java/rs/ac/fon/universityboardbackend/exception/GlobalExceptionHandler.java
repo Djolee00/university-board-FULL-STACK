@@ -49,7 +49,18 @@ public class GlobalExceptionHandler {
         problemDetail.setType(createExceptionTypeUri(ex.getClass()));
         problemDetail.setProperty("timestamp", Instant.now());
 
-        return new ResponseEntity<>(problemDetail, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(problemDetail, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<ProblemDetail> onAccessDeniedException(AccessDeniedException ex) {
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problemDetail.setTitle("You don't have privilege for this action");
+        problemDetail.setType(createExceptionTypeUri(ex.getClass()));
+        problemDetail.setProperty("timestamp", Instant.now());
+
+        return new ResponseEntity<>(problemDetail, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(MailServiceException.class)
@@ -60,7 +71,7 @@ public class GlobalExceptionHandler {
         problemDetail.setType(createExceptionTypeUri(ex.getClass()));
         problemDetail.setProperty("timestamp", Instant.now());
 
-        return new ResponseEntity<>(problemDetail, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(problemDetail, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
