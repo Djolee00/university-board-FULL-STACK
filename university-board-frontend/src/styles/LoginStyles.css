@@ -1,0 +1,45 @@
+.login-paper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 3vw;
+  border-radius: 16px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.login-title {
+  font-size: 4vw;
+  margin-bottom: 4vw;
+}
+
+.login-subtitle {
+  font-size: 1.5vw;
+  color: #555;
+  margin-bottom: 3vw;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 80vw;
+  margin-top: 1vw;
+  margin-bottom: 1vw;
+  max-height: 23vh;
+}
+
+.login-submit-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1vw;
+  margin-bottom: 10vw;
+}
+
+.login-submit {
+  width: 60%;
+}
+
+@media (min-width: 768px) {
+  .login-paper {
+    margin-top: 120px;
+  }
+}
