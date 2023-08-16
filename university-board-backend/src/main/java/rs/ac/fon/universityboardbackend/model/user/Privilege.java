@@ -2,6 +2,7 @@ package rs.ac.fon.universityboardbackend.model.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import java.util.Objects;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -37,5 +38,18 @@ public class Privilege {
         COMMENT_R("Read Comments"),
         COMMENT_W("Write Comment");
         private final String description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Privilege privilege = (Privilege) o;
+        return code == privilege.code && Objects.equals(name, privilege.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, name);
     }
 }
