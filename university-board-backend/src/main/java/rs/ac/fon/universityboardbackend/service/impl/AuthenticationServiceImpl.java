@@ -36,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                 .extractExpiration(jwt)
                                 .toInstant()
                                 .atOffset(ZoneOffset.ofHours(2)))
+                .employeeUuid(user.getEmployee().getUuid())
                 .build();
     }
 }
