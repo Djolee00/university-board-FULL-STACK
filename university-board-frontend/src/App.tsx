@@ -1,11 +1,22 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
+import MainPage from "./pages/MainPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
-      <Route path="/login" Component={Login} />
+      <Route path="/" element={<Navigate to="/boards" />} />
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/boards"
+        element={
+          <ProtectedRoute>
+            <MainPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

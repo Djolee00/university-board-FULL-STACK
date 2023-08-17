@@ -45,7 +45,7 @@ function Login() {
 
       setTimeout(() => {
         navigate("/boards");
-      }, 1500);
+      }, 1000);
     } catch (error) {
       if (
         axios.isAxiosError(error) &&
@@ -66,7 +66,7 @@ function Login() {
   };
 
   const closeErrorPopup = () => {
-    setErrorPopupOpen(false); // Close the error popup
+    setErrorPopupOpen(false);
   };
 
   return (
