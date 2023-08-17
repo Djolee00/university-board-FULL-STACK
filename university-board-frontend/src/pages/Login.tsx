@@ -11,7 +11,7 @@ import "../styles/LoginStyles.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import { storeToken, scheduleLogout } from "../utils/AuthUtils";
+import { storeToken, scheduleLogout, storeUserUuid } from "../utils/AuthUtils";
 import ErrorPopup from "../components/ErrorPopup";
 import SuccessPopup from "../components/SuccessPopup";
 
@@ -37,9 +37,10 @@ function Login() {
         }
       );
 
-      const { token, expirationTime } = response.data;
+      const { token, expirationTime, employeeUuid } = response.data;
 
       storeToken(token);
+      storeUserUuid(employeeUuid);
       scheduleLogout(expirationTime, handleLogout);
       setSuccessPopupOpen(true);
 

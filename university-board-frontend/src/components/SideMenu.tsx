@@ -9,6 +9,7 @@ import {
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonIcon from "@mui/icons-material/Person";
+import { Link } from "react-router-dom";
 
 interface SideMenuProps {
   open: boolean;
@@ -31,7 +32,7 @@ function SideMenu({ open, onClose }: SideMenuProps) {
           </ListItemIcon>
           <ListItemText primary="Employees" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton component={Link} to="/myprofile">
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>

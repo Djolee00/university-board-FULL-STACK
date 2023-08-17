@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import MainPage from "./pages/MainPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import MyProfilePage from "./pages/MyProfilePage";
 
 function App() {
   return (
@@ -14,6 +15,14 @@ function App() {
         element={
           <ProtectedRoute>
             <MainPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/myprofile"
+        element={
+          <ProtectedRoute>
+            <MyProfilePage />
           </ProtectedRoute>
         }
       />
