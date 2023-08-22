@@ -19,6 +19,8 @@ import SuccessPopup from "../components/SuccessPopup";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
 import { AcademicTitle } from "../models/AcademicTitleEnum";
+import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
+import ChangePasswordDialog from "../components/ChangePasswordDialog";
 
 function MyProfilePage() {
   const [employee, setEmployee] = useState<Employee>({
@@ -41,9 +43,47 @@ function MyProfilePage() {
   const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false);
   const [successPopupOpen, setSuccessPopupOpen] = useState<boolean>(false);
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const toggleSideMenu = () => {
     setSideMenuOpen(!sideMenuOpen);
+  };
+
+  const handleOpenChangePassword = () => {
+    setChangePasswordOpen(true);
+  };
+
+  const handleCloseChangePassword = () => {
+    setChangePasswordOpen(false);
+  };
+
+  const handleChangePasswordSubmit = (
+    oldPassword: string,
+    newPassword: string
+  ) => {
+    axios
+      .patch(
+        `http://localhost:8080/api/v1/user-profiles/${employee.userProfile?.uuid}`,
+        { oldPassword, newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccessMessage("Password successfully changed");
+        setSuccessPopupOpen(true);
+      })
+      .catch((error: AxiosError) => {
+        setErrorMessage(
+          error.response?.data.errors
+            ? error.response?.data.errors[0].message
+            : error.response?.data.detail
+        );
+        setErrorPopupOpen(true);
+      });
+    handleCloseChangePassword();
   };
 
   const handleFieldChange = (fieldName: keyof Employee, value: string) => {
@@ -76,8 +116,8 @@ function MyProfilePage() {
   };
 
   useEffect(() => {
-    const uuid = localStorage.getItem("uuid");
-    const storedToken = localStorage.getItem("token");
+    const uuid = getStoredUUID();
+    const storedToken = getStoredToken();
     if (!uuid) {
       navigate("/login");
       return;
@@ -153,19 +193,24 @@ function MyProfilePage() {
                     Academic Title
                   </InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="academic-title-id"
                     label="Academic Title"
                     value={employee.academicTitle || ""}
                     onChange={(e) =>
-                      handleFieldChange("academicTitle", e.target.value)
+                      handleFieldChange(
+                        "academicTitle",
+                        e.target.value as string
+                      )
                     }
                   >
-                    {Object.keys(AcademicTitle).map((title) => (
-                      <MenuItem key={title} value={title}>
-                        {title}
-                      </MenuItem>
-                    ))}
+                    {Object.keys(AcademicTitle).map((titleKey, index) => {
+                      const titleValue = Object.values(AcademicTitle)[index];
+                      return (
+                        <MenuItem key={titleKey} value={titleKey}>
+                          {titleValue}
+                        </MenuItem>
+                      );
+                    })}
                   </Select>
                 </FormControl>
               </Grid>
@@ -176,6 +221,68 @@ function MyProfilePage() {
               </Button>
             </div>
           </form>
+
+          <Typography variant="h4" style={{ marginTop: "35px" }}>
+            User Profile
+          </Typography>
+          <form className="form-container">
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  label="Email"
+                  value={employee.userProfile?.email || ""}
+                  fullWidth
+                  margin="normal"
+                  disabled
+                />
+                <TextField
+                  label="Role"
+                  value={employee.userProfile?.role?.name || ""}
+                  fullWidth
+                  margin="normal"
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Password"
+                  value="********"
+                  fullWidth
+                  margin="normal"
+                  disabled
+                />
+                <TextField
+                  label="Additional Privileges"
+                  value={
+                    employee.userProfile?.privileges
+                      ? employee.userProfile.privileges
+                          .map((privilege) => privilege.name)
+                          .join(", ")
+                      : ""
+                  }
+                  disabled
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+            </Grid>
+          </form>
+          <div className="button-container">
+            <Button
+              variant="contained"
+              className="save-button"
+              onClick={handleOpenChangePassword}
+            >
+              Change Password
+            </Button>
+          </div>
+          <ChangePasswordDialog
+            open={changePasswordOpen}
+            onClose={handleCloseChangePassword}
+            onSubmit={handleChangePasswordSubmit}
+          />
+
           <ErrorPopup
             open={errorPopupOpen}
             message={errorMessage}

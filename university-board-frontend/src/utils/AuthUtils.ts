@@ -13,7 +13,18 @@ export function scheduleLogout(expirationTime: string, onLogout: () => void) {
 
   setTimeout(() => {
     localStorage.removeItem("token");
+    localStorage.removeItem("uuid");
 
     onLogout();
   }, timeUntilExpiration);
 }
+
+export const getStoredToken = () => {
+  const storedToken = localStorage.getItem("token");
+  return storedToken ? storedToken : null;
+};
+
+export const getStoredUUID = () => {
+  const storedUUID = localStorage.getItem("uuid");
+  return storedUUID ? storedUUID : null;
+};
