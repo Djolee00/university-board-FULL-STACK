@@ -23,6 +23,17 @@ import ErrorPopup from "../components/ErrorPopup";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 import SuccessPopup from "../components/SuccessPopup";
+import EmployeeSearchDialog from "../components/EmployeeSearchDialog";
+import SearchIcon from "@mui/icons-material/Search";
+import SortEmployeeComponent from "../components/SortEmployeeComponent";
+import SortIcon from "@mui/icons-material/Sort";
+
+export interface SearchData {
+  firstName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null;
+  academicTitle: string | null;
+}
 
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -37,18 +48,44 @@ const EmployeesPage = () => {
   );
   const [successPopupOpen, setSuccessPopupOpen] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [showSearchDialog, setShowSearchDialog] = useState(false);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [academicTitle, setAcademicTitle] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<string>("firstName");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortPopoverAnchorEl, setSortPopoverAnchorEl] =
+    useState<HTMLElement | null>(null);
 
   useEffect(() => {
+    const generateApiUrl = () => {
+      let apiUrl = `http://localhost:8080/api/v1/employees?size=10&page=${currentPage}&sort=${sortBy},${sortOrder}`;
+
+      if (firstName) {
+        apiUrl += `&firstNameLike=${firstName}`;
+      }
+      if (lastName) {
+        apiUrl += `&lastNameLike=${lastName}`;
+      }
+      if (phoneNumber) {
+        apiUrl += `&phoneNumberLike=${phoneNumber}`;
+      }
+      if (academicTitle) {
+        apiUrl += `&academicTitle=${academicTitle}`;
+      }
+
+      return apiUrl;
+    };
+
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/employees?size=10&page=${currentPage}&sort=firstName`,
-          {
-            headers: {
-              Authorization: `Bearer ${getStoredToken()}`,
-            },
-          }
-        );
+        const apiUrl = generateApiUrl();
+        const response = await axios.get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        });
         setEmployees(response.data.content);
         setTotalPages(response.data.totalPages);
       } catch (error) {
@@ -62,7 +99,15 @@ const EmployeesPage = () => {
     };
 
     fetchEmployees();
-  }, [currentPage]);
+  }, [
+    currentPage,
+    firstName,
+    lastName,
+    phoneNumber,
+    academicTitle,
+    sortBy,
+    sortOrder,
+  ]);
 
   const handlePreviousPage = () => {
     if (currentPage > 0) {
@@ -123,12 +168,62 @@ const EmployeesPage = () => {
     }
   };
 
+  const handleOpenSearchDialog = () => {
+    setShowSearchDialog(true);
+  };
+
+  const handleCloseSearchDialog = () => {
+    setShowSearchDialog(false);
+  };
+
+  const handleSearch = (searchData: SearchData) => {
+    setFirstName(searchData.firstName);
+    setLastName(searchData.lastName);
+    setPhoneNumber(searchData.phoneNumber);
+    setAcademicTitle(searchData.academicTitle);
+    setCurrentPage(0);
+    setShowSearchDialog(false);
+  };
+
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
+  };
+
+  const handleSortButtonClick = (event: React.MouseEvent<HTMLElement>) => {
+    setSortPopoverAnchorEl(event.currentTarget);
+  };
+
+  const closeSortPopover = () => {
+    setSortPopoverAnchorEl(null);
+  };
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
       <SideMenu open={sideMenuOpen} onClose={toggleSideMenu} />
       <div>
         <div className="employee-table-container">
+          <Button
+            onClick={handleOpenSearchDialog}
+            startIcon={<SearchIcon />}
+            variant="outlined"
+            style={{ margin: "10px" }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={handleSortButtonClick}
+            startIcon={<SortIcon />}
+            variant="outlined"
+            style={{ margin: "10px" }}
+          >
+            Sort
+          </Button>
           {employees.length === 0 ? (
             <p className="center-text">No employees found</p>
           ) : (
@@ -184,7 +279,9 @@ const EmployeesPage = () => {
           >
             <NavigateBeforeIcon />
           </Button>
-          <span>{`Page ${currentPage + 1} of ${totalPages}`}</span>
+          <span>{`Page ${
+            totalPages !== 0 ? currentPage + 1 : 0
+          } of ${totalPages}`}</span>
           <Button
             className="pagination-button"
             disabled={currentPage === totalPages - 1}
@@ -194,6 +291,19 @@ const EmployeesPage = () => {
           </Button>
         </div>
       </div>
+      <EmployeeSearchDialog
+        open={showSearchDialog}
+        onClose={handleCloseSearchDialog}
+        onSearch={handleSearch}
+      />
+      <SortEmployeeComponent
+        anchorEl={sortPopoverAnchorEl}
+        open={Boolean(sortPopoverAnchorEl)}
+        onClose={closeSortPopover}
+        onSort={handleSort}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+      />
       <ErrorPopup
         open={errorPopupOpen}
         message={errorMessage}
