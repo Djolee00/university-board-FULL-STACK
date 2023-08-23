@@ -16,12 +16,15 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import "../styles/EmployeesStyles.css";
 import { AcademicTitle } from "../models/AcademicTitleEnum";
+import ErrorPopup from "../components/ErrorPopup";
 
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -37,7 +40,11 @@ const EmployeesPage = () => {
         setEmployees(response.data.content);
         setTotalPages(response.data.totalPages);
       } catch (error) {
-        console.error("Error fetching employee data:", error);
+        if (axios.isAxiosError(error) && error.response) {
+          console.log(error.response.data.detail);
+        }
+        setErrorMessage("Error fetching data from server");
+        setErrorPopupOpen(true);
       }
     };
 
@@ -58,6 +65,10 @@ const EmployeesPage = () => {
 
   const toggleSideMenu = () => {
     setSideMenuOpen(!sideMenuOpen);
+  };
+
+  const closeErrorPopup = () => {
+    setErrorPopupOpen(false);
   };
 
   return (
@@ -117,6 +128,11 @@ const EmployeesPage = () => {
           </Button>
         </div>
       </div>
+      <ErrorPopup
+        open={errorPopupOpen}
+        message={errorMessage}
+        onClose={closeErrorPopup}
+      />
     </>
   );
 };
