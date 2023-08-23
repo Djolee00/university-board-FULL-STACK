@@ -111,7 +111,7 @@ public class EmployeeController extends AbstractController {
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable UUID uuid) {
-        hasPrivilegeOrThrow(PrivilegeCode.ACCOUNT_W);
+        hasPrivilegeOrThrow(PrivilegeCode.ACCOUNT_D);
 
         Employee employee = employeeService.findByUuid(uuid);
         employeeService.delete(employee);

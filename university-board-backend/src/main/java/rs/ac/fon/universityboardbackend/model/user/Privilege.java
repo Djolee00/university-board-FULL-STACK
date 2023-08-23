@@ -28,6 +28,7 @@ public class Privilege {
         ACCOUNT_C("Account Create"),
         ACCOUNT_W("Account Write"),
         ACCOUNT_R("Account Read"),
+        ACCOUNT_D("Account Delete"),
         BOARD_C("Board Create"),
         BOARD_W("Board Write"),
         BOARD_R("Board Read"),
