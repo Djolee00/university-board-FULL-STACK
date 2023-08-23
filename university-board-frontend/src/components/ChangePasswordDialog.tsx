@@ -14,11 +14,11 @@ interface ChangePasswordDialogProps {
   onSubmit: (oldPassword: string, newPassword: string) => void;
 }
 
-const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({
+function ChangePasswordDialog({
   open,
   onClose,
   onSubmit,
-}) => {
+}: ChangePasswordDialogProps) {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
@@ -58,6 +58,6 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default ChangePasswordDialog;

@@ -1,9 +1,9 @@
 .employee-table-container {
   border: 1px solid #ddd;
-  padding: 30px;
+  padding: 20px;
   border-radius: 5px;
-  margin: 30px;
-  min-height: 480px;
+  margin: 25px;
+  min-height: 710px;
   background-color: #f9f9f9;
 }
 
@@ -32,4 +32,8 @@
 
 .pagination-button {
   margin: 0 5px;
+}
+
+.center-text {
+  text-align: center;
 }
