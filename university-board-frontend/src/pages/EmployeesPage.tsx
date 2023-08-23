@@ -41,9 +41,10 @@ const EmployeesPage = () => {
         setTotalPages(response.data.totalPages);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          console.log(error.response.data.detail);
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Error fetching data from server");
         }
-        setErrorMessage("Error fetching data from server");
         setErrorPopupOpen(true);
       }
     };

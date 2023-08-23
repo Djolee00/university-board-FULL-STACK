@@ -110,7 +110,11 @@ function MyProfilePage() {
         setSuccessPopupOpen(true);
       })
       .catch((error: AxiosError) => {
-        setErrorMessage(error.response?.data.detail);
+        setErrorMessage(
+          error.response?.data.errors
+            ? error.response?.data.errors[0].message
+            : error.response?.data.detail
+        );
         setErrorPopupOpen(true);
       });
   };
