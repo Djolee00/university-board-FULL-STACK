@@ -26,7 +26,7 @@ function SideMenu({ open, onClose }: SideMenuProps) {
           </ListItemIcon>
           <ListItemText primary="Boards" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton component={Link} to="/employees">
           <ListItemIcon>
             <PeopleIcon />
           </ListItemIcon>

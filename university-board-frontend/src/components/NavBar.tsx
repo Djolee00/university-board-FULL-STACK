@@ -1,6 +1,6 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
-import SchoolIcon from "@mui/icons-material/School";
+import MenuIcon from "@mui/icons-material/Menu";
 interface NavbarProps {
   onMenuToggle: () => void;
 }
@@ -15,7 +15,7 @@ function Navbar({ onMenuToggle }: NavbarProps) {
           color="inherit"
           onClick={onMenuToggle}
         >
-          <SchoolIcon />
+          <MenuIcon />
         </IconButton>
         <Typography variant="h6">University Board</Typography>
       </Toolbar>
