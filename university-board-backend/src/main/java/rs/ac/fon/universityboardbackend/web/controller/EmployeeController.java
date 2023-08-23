@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -114,7 +116,11 @@ public class EmployeeController extends AbstractController {
         hasPrivilegeOrThrow(PrivilegeCode.ACCOUNT_D);
 
         Employee employee = employeeService.findByUuid(uuid);
-        employeeService.delete(employee);
+        try{
+            employeeService.delete(employee);
+        }catch (Exception e){
+            throw new ValidationException("Employee with memberships can not be deleted");
+        }
         return ResponseEntity.noContent().build();
     }
 }
