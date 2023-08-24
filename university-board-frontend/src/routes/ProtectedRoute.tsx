@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getStoredToken } from "../utils/AuthUtils";
+import { clearStorage, getStoredToken } from "../utils/AuthUtils";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -15,6 +15,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = (props) => {
       setIsLoggedIn(false);
       return navigate("/login");
     }
+
+    const tokenPayload = JSON.parse(atob(userToken.split(".")[1]));
+    const expirationTime = tokenPayload.exp * 1000;
+    const currentTime = new Date().getTime();
+    if (currentTime > expirationTime) {
+      clearStorage();
+      return navigate("/login");
+    }
+
     setIsLoggedIn(true);
   };
   useEffect(() => {

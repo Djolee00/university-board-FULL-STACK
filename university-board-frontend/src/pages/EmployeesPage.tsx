@@ -10,11 +10,16 @@ import {
   IconButton,
   TableContainer,
   Paper,
+  Fab,
 } from "@mui/material";
 import { Employee } from "../models/Employee";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
-import { getStoredToken } from "../utils/AuthUtils";
+import {
+  clearStorage,
+  getStoredToken,
+  getStoredUUID,
+} from "../utils/AuthUtils";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import "../styles/EmployeesStyles.css";
@@ -27,6 +32,10 @@ import EmployeeSearchDialog from "../components/EmployeeSearchDialog";
 import SearchIcon from "@mui/icons-material/Search";
 import SortEmployeeComponent from "../components/SortEmployeeComponent";
 import SortIcon from "@mui/icons-material/Sort";
+import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import CreateEmployeeDialog from "../components/CreateEmployeeDialog";
+import { Privilege, Role } from "../models/UserProfile";
 
 export interface SearchData {
   firstName: string | null;
@@ -57,6 +66,11 @@ const EmployeesPage = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortPopoverAnchorEl, setSortPopoverAnchorEl] =
     useState<HTMLElement | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [privileges, setPrivileges] = useState<Privilege[]>([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const generateApiUrl = () => {
@@ -109,6 +123,50 @@ const EmployeesPage = () => {
     sortOrder,
   ]);
 
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/roles`, {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        });
+        setRoles(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Error fetching employees from server");
+        }
+        setErrorPopupOpen(true);
+      }
+    };
+
+    const fetchPrivileges = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/privileges`,
+          {
+            headers: {
+              Authorization: `Bearer ${getStoredToken()}`,
+            },
+          }
+        );
+        setPrivileges(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Error fetching privileges from server");
+        }
+        setErrorPopupOpen(true);
+      }
+    };
+    fetchRoles();
+    fetchPrivileges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
@@ -138,7 +196,6 @@ const EmployeesPage = () => {
     setSelectedEmployee(null);
     setDeleteDialogOpen(false);
   };
-
   const handleConfirmDelete = () => {
     if (selectedEmployee) {
       if (selectedEmployee)
@@ -159,6 +216,10 @@ const EmployeesPage = () => {
                 (employee) => employee.uuid !== selectedEmployee.uuid
               )
             );
+            if (selectedEmployee.uuid === getStoredUUID()) {
+              clearStorage();
+              navigate("/login");
+            }
           })
           .catch((error) => {
             setErrorMessage(error.response.data.detail);
@@ -202,6 +263,43 @@ const EmployeesPage = () => {
     setSortPopoverAnchorEl(null);
   };
 
+  const handleCreateEmployee = (newEmployee: Employee) => {
+    const newEmployeeData = {
+      firstName: newEmployee.firstName,
+      lastName: newEmployee.lastName,
+      phoneNumber: newEmployee.phoneNumber,
+      academicTitle: newEmployee.academicTitle,
+      userProfile: {
+        email: newEmployee.userProfile?.email,
+        role: {
+          uuid: newEmployee.userProfile?.role?.uuid,
+        },
+        privileges: newEmployee.userProfile?.privileges,
+      },
+    };
+
+    console.log(newEmployeeData);
+
+    axios
+      .post(`http://localhost:8080/api/v1/employees`, newEmployee, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
+      .then((response) => {
+        setSuccessMessage("Employee successfully saved");
+        setSuccessPopupOpen(true);
+        newEmployee.uuid = response.data.identifier;
+        setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
+        setCreateDialogOpen(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        setErrorMessage(error.response.data.detail);
+        setErrorPopupOpen(true);
+      });
+  };
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -224,6 +322,14 @@ const EmployeesPage = () => {
           >
             Sort
           </Button>
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="add"
+            onClick={() => setCreateDialogOpen(true)}
+          >
+            <AddIcon />
+          </Fab>
           {employees.length === 0 ? (
             <p className="center-text">No employees found</p>
           ) : (
@@ -303,6 +409,13 @@ const EmployeesPage = () => {
         onSort={handleSort}
         sortBy={sortBy}
         sortOrder={sortOrder}
+      />
+      <CreateEmployeeDialog
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+        onAddEmployee={handleCreateEmployee}
+        roles={roles}
+        allPrivileges={privileges}
       />
       <ErrorPopup
         open={errorPopupOpen}

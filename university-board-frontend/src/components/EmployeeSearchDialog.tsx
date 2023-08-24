@@ -86,6 +86,7 @@ function EmployeeSearchDialog({
         />
         <TextField
           label="Phone Number"
+          type="number"
           value={searchData.phoneNumber || ""}
           onChange={(e) =>
             setSearchData({ ...searchData, phoneNumber: e.target.value })
