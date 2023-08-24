@@ -33,9 +33,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import SortEmployeeComponent from "../components/SortEmployeeComponent";
 import SortIcon from "@mui/icons-material/Sort";
 import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
 import CreateEmployeeDialog from "../components/CreateEmployeeDialog";
 import { Privilege, Role } from "../models/UserProfile";
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 
 export interface SearchData {
   firstName: string | null;
@@ -320,9 +320,11 @@ const EmployeesPage = () => {
                 size="medium"
                 color="primary"
                 aria-label="add"
+                variant="extended"
                 onClick={() => setCreateDialogOpen(true)}
               >
-                <AddIcon />
+                <PersonAddAltIcon sx={{ mr: 1 }} />
+                New
               </Fab>
             </div>
           </div>
