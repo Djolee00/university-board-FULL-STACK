@@ -173,7 +173,7 @@ function CreateEmployeeDialog({
                 <Select
                   labelId="academic-title-id"
                   label="Academic Title"
-                  value={academicTitle}
+                  value={academicTitle.toUpperCase()}
                   onChange={(e) =>
                     setAcademicTitle(e.target.value as AcademicTitle)
                   }
