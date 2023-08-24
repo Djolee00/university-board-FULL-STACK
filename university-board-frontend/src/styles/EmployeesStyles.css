@@ -49,3 +49,19 @@
   justify-content: center;
   align-items: center;
 }
+
+.employee-buttons-left {
+  display: flex;
+  gap: 10px;
+}
+
+.employee-buttons-right {
+  margin-left: auto;
+}
+
+.employee-button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px;
+}

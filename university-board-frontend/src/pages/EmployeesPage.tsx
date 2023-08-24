@@ -274,7 +274,6 @@ const EmployeesPage = () => {
         setSuccessMessage("Employee successfully saved");
         setSuccessPopupOpen(true);
         newEmployee.uuid = response.data.identifier;
-        setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
         setCreateDialogOpen(false);
         refreshSearchFilters();
       })
@@ -287,7 +286,7 @@ const EmployeesPage = () => {
   };
 
   const refreshSearchFilters = (): void => {
-    setFirstName(null);
+    setFirstName("");
     setLastName(null);
     setAcademicTitle(null);
     setPhoneNumber(null);
@@ -299,30 +298,34 @@ const EmployeesPage = () => {
       <SideMenu open={sideMenuOpen} onClose={toggleSideMenu} />
       <div>
         <div className="employee-table-container">
-          <Button
-            onClick={handleOpenSearchDialog}
-            startIcon={<SearchIcon />}
-            variant="outlined"
-            style={{ margin: "10px" }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={handleSortButtonClick}
-            startIcon={<SortIcon />}
-            variant="outlined"
-            style={{ margin: "10px" }}
-          >
-            Sort
-          </Button>
-          <Fab
-            size="small"
-            color="primary"
-            aria-label="add"
-            onClick={() => setCreateDialogOpen(true)}
-          >
-            <AddIcon />
-          </Fab>
+          <div className="employee-button-container">
+            <div className="employee-buttons-left">
+              <Button
+                onClick={handleOpenSearchDialog}
+                startIcon={<SearchIcon />}
+                variant="outlined"
+              >
+                Search
+              </Button>
+              <Button
+                onClick={handleSortButtonClick}
+                startIcon={<SortIcon />}
+                variant="outlined"
+              >
+                Sort
+              </Button>
+            </div>
+            <div className="employee-buttons-right">
+              <Fab
+                size="medium"
+                color="primary"
+                aria-label="add"
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                <AddIcon />
+              </Fab>
+            </div>
+          </div>
           {employees.length === 0 ? (
             <p className="center-text">No employees found</p>
           ) : (
