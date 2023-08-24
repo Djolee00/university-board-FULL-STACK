@@ -276,6 +276,7 @@ const EmployeesPage = () => {
         newEmployee.uuid = response.data.identifier;
         setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
         setCreateDialogOpen(false);
+        refreshSearchFilters();
       })
       .catch((error) => {
         console.log(error.response);
@@ -283,6 +284,13 @@ const EmployeesPage = () => {
         setErrorPopupOpen(true);
         throw error;
       });
+  };
+
+  const refreshSearchFilters = (): void => {
+    setFirstName(null);
+    setLastName(null);
+    setAcademicTitle(null);
+    setPhoneNumber(null);
   };
 
   return (
