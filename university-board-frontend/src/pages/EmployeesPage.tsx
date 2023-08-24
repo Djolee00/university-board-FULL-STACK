@@ -263,24 +263,8 @@ const EmployeesPage = () => {
     setSortPopoverAnchorEl(null);
   };
 
-  const handleCreateEmployee = (newEmployee: Employee) => {
-    const newEmployeeData = {
-      firstName: newEmployee.firstName,
-      lastName: newEmployee.lastName,
-      phoneNumber: newEmployee.phoneNumber,
-      academicTitle: newEmployee.academicTitle,
-      userProfile: {
-        email: newEmployee.userProfile?.email,
-        role: {
-          uuid: newEmployee.userProfile?.role?.uuid,
-        },
-        privileges: newEmployee.userProfile?.privileges,
-      },
-    };
-
-    console.log(newEmployeeData);
-
-    axios
+  const handleCreateEmployee = (newEmployee: Employee): Promise<void> => {
+    return axios
       .post(`http://localhost:8080/api/v1/employees`, newEmployee, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
@@ -297,6 +281,7 @@ const EmployeesPage = () => {
         console.log(error.response);
         setErrorMessage(error.response.data.detail);
         setErrorPopupOpen(true);
+        throw error;
       });
   };
 

@@ -19,12 +19,14 @@ import {
   Checkbox,
   DialogActions,
   Button,
+  CircularProgress,
 } from "@mui/material";
+import "../styles/EmployeesStyles.css";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  onAddEmployee: (newEmployee: Employee) => void;
+  onAddEmployee: (newEmployee: Employee) => Promise<void>;
   roles: Role[];
   allPrivileges: Privilege[];
 }
@@ -52,6 +54,7 @@ function CreateEmployeeDialog({
   const [availablePrivileges, setAvailablePrivileges] = useState<Privilege[]>(
     []
   );
+  const [loading, setLoading] = useState(false);
 
   const handleRoleChange = (event: SelectChangeEvent<string>) => {
     const roleUuid = event.target.value;
@@ -113,8 +116,21 @@ function CreateEmployeeDialog({
         uuid: null,
       },
     };
+    setLoading(true);
 
-    onAddEmployee(newEmployee);
+    onAddEmployee(newEmployee)
+      .then(() => {
+        setFirstName("");
+        setLastName("");
+        setAcademicTitle(AcademicTitle.PROFESSOR);
+        setPhoneNumber("");
+        setEmail("");
+        setSelectedRole(null);
+        setSelectedPrivileges([]);
+        setAvailablePrivileges([]);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -268,6 +284,11 @@ function CreateEmployeeDialog({
           </DialogActions>
         </form>
       </DialogContent>
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
     </Dialog>
   );
 }
