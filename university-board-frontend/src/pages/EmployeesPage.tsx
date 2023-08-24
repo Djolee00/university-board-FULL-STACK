@@ -303,14 +303,14 @@ const EmployeesPage = () => {
               <Button
                 onClick={handleOpenSearchDialog}
                 startIcon={<SearchIcon />}
-                variant="outlined"
+                variant="contained"
               >
                 Search
               </Button>
               <Button
                 onClick={handleSortButtonClick}
                 startIcon={<SortIcon />}
-                variant="outlined"
+                variant="contained"
               >
                 Sort
               </Button>
@@ -318,7 +318,7 @@ const EmployeesPage = () => {
             <div className="employee-buttons-right">
               <Fab
                 size="medium"
-                color="primary"
+                color="success"
                 aria-label="add"
                 variant="extended"
                 onClick={() => setCreateDialogOpen(true)}
