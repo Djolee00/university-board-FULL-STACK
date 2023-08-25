@@ -18,19 +18,22 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
 import "../styles/BoardsStyle.css";
+import ErrorPopup from "../components/ErrorPopup";
+import SuccessPopup from "../components/SuccessPopup";
 
 function BoardsPage() {
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  //   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false);
-  //   const [successPopupOpen, setSuccessPopupOpen] = useState<boolean>(false);
+  const [successPopupOpen, setSuccessPopupOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(9);
   const [totalPages, setTotalPages] = useState(0);
   const [boards, setBoards] = useState<Board[]>([]);
   const [displayMyBoards, setDisplayMyBoards] = useState(false);
+
   const employeeUuid = getStoredUUID();
+  const pageSize = 9;
 
   useEffect(() => {
     const generateApiUrl = () => {
@@ -82,6 +85,10 @@ function BoardsPage() {
     }
   };
 
+  const closeErrorPopup = () => {
+    setErrorPopupOpen(false);
+  };
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -116,15 +123,20 @@ function BoardsPage() {
                   style={{
                     backgroundColor: "#f9f9f9",
                     boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
-                    maxHeight: "200px",
-                    minHeight: "200px",
+                    maxHeight: "230px",
+                    minHeight: "230px",
                   }}
                 >
                   <CardContent>
-                    <Typography variant="h6">{board.name}</Typography>
-                    <Typography>{`Members: ${board.memberships.length}`}</Typography>
-                    <Typography className="description">{`Description: ${board.description}`}</Typography>
+                    <Typography variant="h6" fontWeight={"bold"}>
+                      {board.name}
+                    </Typography>
+                    <Typography className="description">{`${board.description}`}</Typography>
+                    <Typography
+                      marginTop={"20px"}
+                    >{`Members: ${board.memberships.length}`}</Typography>
                     <Typography>{`Type: ${board.boardType.name}`}</Typography>
+                    <Typography>{`From: ${board.startDate} To: ${board.endDate}`}</Typography>
                     {board.memberships.some(
                       (membership) => membership.employee.uuid === employeeUuid
                     ) && (
@@ -159,6 +171,16 @@ function BoardsPage() {
           <NavigateNextIcon />
         </Button>
       </div>
+      <ErrorPopup
+        open={errorPopupOpen}
+        message={errorMessage}
+        onClose={closeErrorPopup}
+      />
+      <SuccessPopup
+        open={successPopupOpen}
+        message={successMessage}
+        onClose={() => setSuccessPopupOpen(false)}
+      />
     </>
   );
 }

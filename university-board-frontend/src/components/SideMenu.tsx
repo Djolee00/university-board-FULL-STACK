@@ -20,7 +20,7 @@ function SideMenu({ open, onClose }: SideMenuProps) {
   return (
     <Drawer anchor="left" open={open} onClose={onClose}>
       <List>
-        <ListItemButton>
+        <ListItemButton component={Link} to="/boards">
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
