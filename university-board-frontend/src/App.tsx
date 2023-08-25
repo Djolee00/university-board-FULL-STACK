@@ -1,10 +1,10 @@
 import "./App.css";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import Login from "./pages/Login";
-import MainPage from "./pages/MainPage";
+import Login from "./pages/LoginPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import MyProfilePage from "./pages/MyProfilePage";
 import EmployeesPage from "./pages/EmployeesPage";
+import BoardsPage from "./pages/BoardsPage";
 import { useEffect } from "react";
 import { clearStorage, getStoredToken } from "./utils/AuthUtils";
 
@@ -42,7 +42,7 @@ function App() {
         path="/boards"
         element={
           <ProtectedRoute>
-            <MainPage />
+            <BoardsPage />
           </ProtectedRoute>
         }
       />

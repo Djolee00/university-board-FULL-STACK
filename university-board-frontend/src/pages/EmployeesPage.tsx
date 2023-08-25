@@ -286,7 +286,7 @@ const EmployeesPage = () => {
   };
 
   const refreshSearchFilters = (): void => {
-    setFirstName("");
+    setFirstName(firstName === null ? "" : null);
     setLastName(null);
     setAcademicTitle(null);
     setPhoneNumber(null);
