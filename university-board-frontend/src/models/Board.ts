@@ -10,8 +10,17 @@ export interface Board {
   description: string;
   startDate: string;
   endDate: string;
-  status: string;
+  status: BoardStatus;
   boardType: BoardType;
   uuid: string;
   memberships: Membership[];
 }
+
+export enum BoardStatus {
+  PENDING = "Pending",
+  ACTIVE = "Active",
+  CLOSED = "Closed",
+  EXPIRED = "Expired",
+}
+
+export default BoardStatus;

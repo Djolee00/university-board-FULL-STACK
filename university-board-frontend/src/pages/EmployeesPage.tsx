@@ -136,7 +136,7 @@ const EmployeesPage = () => {
         if (axios.isAxiosError(error) && error.response) {
           setErrorMessage(error.response.data.detail);
         } else {
-          setErrorMessage("Error fetching employees from server");
+          setErrorMessage("Error fetching roles from server");
         }
         setErrorPopupOpen(true);
       }

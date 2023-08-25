@@ -14,3 +14,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.boards-buttons-left {
+  display: flex;
+  gap: 10px;
+}
+
+.boards-buttons-right {
+  margin-left: auto;
+}
+
+.boards-button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 20px;
+}

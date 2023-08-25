@@ -10,7 +10,7 @@ import {
   Paper,
 } from "@mui/material";
 import axios from "axios";
-import { Board } from "../models/Board";
+import BoardStatus, { Board, BoardType } from "../models/Board";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
 import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
@@ -20,6 +20,16 @@ import CardMembershipIcon from "@mui/icons-material/CardMembership";
 import "../styles/BoardsStyle.css";
 import ErrorPopup from "../components/ErrorPopup";
 import SuccessPopup from "../components/SuccessPopup";
+import SearchIcon from "@mui/icons-material/Search";
+import BoardSearchComponent from "../components/BoardSearchComponent";
+
+export interface SearchData {
+  name: string | null;
+  startDateFrom: string | null;
+  endDateTo: string | null;
+  boardStatus: string | null;
+  boardTypeUuid: string | null;
+}
 
 function BoardsPage() {
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
@@ -32,7 +42,15 @@ function BoardsPage() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [displayMyBoards, setDisplayMyBoards] = useState(false);
 
+  const [name, setName] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
+  const [boardStatus, setBoardStatus] = useState<string | null>(null);
+  const [boardTypeUuid, setBoardTypeUuid] = useState<string | null>(null);
+  const [showSearchDialog, setShowSearchDialog] = useState(false);
+
   const employeeUuid = getStoredUUID();
+  const [boardTypes, setBoardTypes] = useState<BoardType[]>([]);
   const pageSize = 9;
 
   useEffect(() => {
@@ -41,6 +59,26 @@ function BoardsPage() {
 
       if (displayMyBoards) {
         apiUrl += `&employeeUuid=${employeeUuid}`;
+      }
+
+      if (name) {
+        apiUrl += `&nameLike=${name}`;
+      }
+
+      if (startDate) {
+        apiUrl += `&startDateFrom=${startDate}`;
+      }
+
+      if (endDate) {
+        apiUrl += `&endDateTo=${endDate}`;
+      }
+
+      if (boardStatus) {
+        apiUrl += `&status=${boardStatus}`;
+      }
+
+      if (boardTypeUuid) {
+        apiUrl += `&boardTypeUuid=${boardTypeUuid}`;
       }
 
       return apiUrl;
@@ -66,8 +104,43 @@ function BoardsPage() {
       }
     };
 
+    const fetchBoardTypes = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/board-types`,
+          {
+            headers: {
+              Authorization: `Bearer ${getStoredToken()}`,
+            },
+          }
+        );
+        setBoardTypes(response.data);
+        console.log(boardTypes);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Error fetching board types from server");
+        }
+        setErrorPopupOpen(true);
+      }
+    };
+
     fetchBoards();
-  }, [displayMyBoards, currentPage, pageSize]);
+    fetchBoardTypes();
+    return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    displayMyBoards,
+    currentPage,
+    pageSize,
+    name,
+    startDate,
+    endDate,
+    boardStatus,
+    boardTypeUuid,
+    employeeUuid,
+  ]);
 
   const toggleSideMenu = () => {
     setSideMenuOpen(!sideMenuOpen);
@@ -87,6 +160,30 @@ function BoardsPage() {
 
   const closeErrorPopup = () => {
     setErrorPopupOpen(false);
+  };
+
+  const handleOpenSearchDialog = () => {
+    setShowSearchDialog(true);
+  };
+
+  const handleCloseSearchDialog = () => {
+    setShowSearchDialog(false);
+  };
+
+  const handleSearch = (searchData: SearchData) => {
+    if (searchData.startDateFrom) {
+      searchData.startDateFrom = searchData.startDateFrom.split("T")[0];
+    }
+    if (searchData.endDateTo) {
+      searchData.endDateTo = searchData.endDateTo.split("T")[0];
+    }
+    setName(searchData.name);
+    setStartDate(searchData.startDateFrom);
+    setEndDate(searchData.endDateTo);
+    setBoardStatus(searchData.boardStatus);
+    setBoardTypeUuid(searchData.boardTypeUuid);
+    setCurrentPage(0);
+    setShowSearchDialog(false);
   };
 
   return (
@@ -112,44 +209,86 @@ function BoardsPage() {
             My Boards
           </ToggleButton>
         </ToggleButtonGroup>
+        <div className="boards-button-container">
+          <div className="boards-buttons-left">
+            <Button
+              onClick={handleOpenSearchDialog}
+              startIcon={<SearchIcon />}
+              variant="contained"
+            >
+              Search
+            </Button>
+            {/* <Button
+                onClick={handleSortButtonClick}
+                startIcon={<SortIcon />}
+                variant="contained"
+              >
+                Sort
+              </Button>
+            </div> */}
+            {/* <div className="boards-buttons-right">
+              <Fab
+                size="medium"
+                color="success"
+                aria-label="add"
+                variant="extended"
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                <PersonAddAltIcon sx={{ mr: 1 }} />
+                New
+              </Fab> */}
+          </div>
+        </div>
         <Paper
           variant="outlined"
           style={{ margin: "20px", minBlockSize: "550px" }}
         >
-          <Grid container spacing={2} padding={"20px"}>
-            {boards.map((board) => (
-              <Grid item xs={12} sm={6} md={4} key={board.uuid}>
-                <Card
-                  style={{
-                    backgroundColor: "#f9f9f9",
-                    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
-                    maxHeight: "230px",
-                    minHeight: "230px",
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" fontWeight={"bold"}>
-                      {board.name}
-                    </Typography>
-                    <Typography className="description">{`${board.description}`}</Typography>
-                    <Typography
-                      marginTop={"20px"}
-                    >{`Members: ${board.memberships.length}`}</Typography>
-                    <Typography>{`Type: ${board.boardType.name}`}</Typography>
-                    <Typography>{`From: ${board.startDate} To: ${board.endDate}`}</Typography>
-                    {board.memberships.some(
-                      (membership) => membership.employee.uuid === employeeUuid
-                    ) && (
-                      <CardMembershipIcon
-                        style={{ marginTop: "25px" }}
-                        color="primary"
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          {boards.length === 0 ? (
+            <p className="center-text">No boards found</p>
+          ) : (
+            <Grid container spacing={2} padding={"20px"}>
+              {boards.map((board) => (
+                <Grid item xs={12} sm={6} md={4} key={board.uuid}>
+                  <Card
+                    style={{
+                      backgroundColor: "#f9f9f9",
+                      boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
+                      maxHeight: "230px",
+                      minHeight: "230px",
+                    }}
+                  >
+                    <CardContent>
+                      <Typography variant="h6" fontWeight={"bold"}>
+                        {board.name}
+                      </Typography>
+                      <Typography className="description">{`${board.description}`}</Typography>
+                      <Typography
+                        marginTop={"20px"}
+                      >{`Members: ${board.memberships.length}`}</Typography>
+                      <Typography className="description">{`Status:  ${
+                        Object.values(BoardStatus)[
+                          Object.keys(BoardStatus).indexOf(
+                            board.status as string
+                          )
+                        ]
+                      }`}</Typography>
+                      <Typography>{`Type: ${board.boardType.name}`}</Typography>
+                      <Typography>{`From: ${board.startDate} To: ${board.endDate}`}</Typography>
+                      {board.memberships.some(
+                        (membership) =>
+                          membership.employee.uuid === employeeUuid
+                      ) && (
+                        <CardMembershipIcon
+                          style={{ marginTop: "10px" }}
+                          color="primary"
+                        />
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Paper>
       </div>
       <div className="pagination-container">
@@ -180,6 +319,12 @@ function BoardsPage() {
         open={successPopupOpen}
         message={successMessage}
         onClose={() => setSuccessPopupOpen(false)}
+      />
+      <BoardSearchComponent
+        open={showSearchDialog}
+        onClose={handleCloseSearchDialog}
+        onSearch={handleSearch}
+        boardTypes={boardTypes}
       />
     </>
   );
