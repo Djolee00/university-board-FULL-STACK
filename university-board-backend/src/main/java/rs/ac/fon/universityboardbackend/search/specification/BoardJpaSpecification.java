@@ -11,6 +11,10 @@ import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.board.BoardType;
 import rs.ac.fon.universityboardbackend.model.board.BoardType_;
 import rs.ac.fon.universityboardbackend.model.board.Board_;
+import rs.ac.fon.universityboardbackend.model.employee.Employee;
+import rs.ac.fon.universityboardbackend.model.employee.Employee_;
+import rs.ac.fon.universityboardbackend.model.membership.Membership;
+import rs.ac.fon.universityboardbackend.model.membership.Membership_;
 import rs.ac.fon.universityboardbackend.search.domain.BoardSearch;
 
 @RequiredArgsConstructor
@@ -48,6 +52,14 @@ public class BoardJpaSpecification implements Specification<Board> {
             predicates.add(
                     (criteriaBuilder.equal(
                             boardTypeJoin.get(BoardType_.ID), search.getBoardType().getId())));
+        }
+
+        if (search.getEmployee() != null) {
+            Join<Board, Membership> membershipJoin = root.join(Board_.MEMBERSHIPS);
+            Join<Membership, Employee> employeeJoin = membershipJoin.join(Membership_.EMPLOYEE);
+            predicates.add(
+                    criteriaBuilder.equal(
+                            employeeJoin.get(Employee_.ID), search.getEmployee().getId()));
         }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

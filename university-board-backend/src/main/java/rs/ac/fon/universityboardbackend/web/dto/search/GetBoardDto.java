@@ -10,4 +10,5 @@ public record GetBoardDto(
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDateFrom,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDateTo,
         BoardStatus status,
-        UUID boardTypeUuid) {}
+        UUID boardTypeUuid,
+        UUID employeeUuid) {}

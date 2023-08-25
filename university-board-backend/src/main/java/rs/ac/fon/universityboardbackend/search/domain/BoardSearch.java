@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 import rs.ac.fon.universityboardbackend.model.board.Board.BoardStatus;
 import rs.ac.fon.universityboardbackend.model.board.BoardType;
+import rs.ac.fon.universityboardbackend.model.employee.Employee;
 
 @Getter
 @Setter
@@ -23,4 +24,5 @@ public class BoardSearch {
 
     private BoardStatus status;
     private BoardType boardType;
+    private Employee employee;
 }

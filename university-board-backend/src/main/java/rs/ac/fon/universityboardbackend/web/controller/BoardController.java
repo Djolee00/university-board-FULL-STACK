@@ -16,10 +16,7 @@ import rs.ac.fon.universityboardbackend.model.board.BoardType;
 import rs.ac.fon.universityboardbackend.model.membership.Membership;
 import rs.ac.fon.universityboardbackend.model.user.Privilege.PrivilegeCode;
 import rs.ac.fon.universityboardbackend.search.domain.BoardSearch;
-import rs.ac.fon.universityboardbackend.service.AuthorizationService;
-import rs.ac.fon.universityboardbackend.service.BoardService;
-import rs.ac.fon.universityboardbackend.service.BoardTypeService;
-import rs.ac.fon.universityboardbackend.service.UserProfileService;
+import rs.ac.fon.universityboardbackend.service.*;
 import rs.ac.fon.universityboardbackend.web.dto.base.BoardBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.base.MembershipBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.create.BoardCreateDto;
@@ -37,18 +34,22 @@ public class BoardController extends AbstractController {
     private final BoardTypeService boardTypeService;
     private final BoardService boardService;
 
+    private final EmployeeService employeeService;
+
     public BoardController(
             AuthorizationService authorizationService,
             UserProfileService userProfileService,
             BoardMapper boardMapper,
             MembershipMapper membershipMapper,
             BoardTypeService boardTypeService,
-            BoardService boardService) {
+            BoardService boardService,
+            EmployeeService employeeService) {
         super(authorizationService, userProfileService);
         this.boardMapper = boardMapper;
         this.membershipMapper = membershipMapper;
         this.boardTypeService = boardTypeService;
         this.boardService = boardService;
+        this.employeeService = employeeService;
     }
 
     @PostMapping
@@ -114,6 +115,10 @@ public class BoardController extends AbstractController {
 
         if (searchDto.boardTypeUuid() != null) {
             boardSearch.setBoardType(boardTypeService.findByUuid(searchDto.boardTypeUuid()));
+        }
+
+        if (searchDto.employeeUuid() != null) {
+            boardSearch.setEmployee(employeeService.findByUuid(searchDto.employeeUuid()));
         }
 
         Page<Board> boards = boardService.findAll(boardSearch, pageable);
