@@ -16,12 +16,14 @@ import SideMenu from "../components/SideMenu";
 import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import CardMembershipIcon from "@mui/icons-material/CardMembership";
+import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import "../styles/BoardsStyle.css";
 import ErrorPopup from "../components/ErrorPopup";
 import SuccessPopup from "../components/SuccessPopup";
 import SearchIcon from "@mui/icons-material/Search";
 import BoardSearchComponent from "../components/BoardSearchComponent";
+import SortIcon from "@mui/icons-material/Sort";
+import SortBoardComponent from "../components/SortBoardComponent";
 
 export interface SearchData {
   name: string | null;
@@ -49,13 +51,18 @@ function BoardsPage() {
   const [boardTypeUuid, setBoardTypeUuid] = useState<string | null>(null);
   const [showSearchDialog, setShowSearchDialog] = useState(false);
 
+  const [sortPopoverAnchorEl, setSortPopoverAnchorEl] =
+    useState<HTMLElement | null>(null);
+  const [sortBy, setSortBy] = useState<string>("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
   const employeeUuid = getStoredUUID();
   const [boardTypes, setBoardTypes] = useState<BoardType[]>([]);
   const pageSize = 9;
 
   useEffect(() => {
     const generateApiUrl = () => {
-      let apiUrl = `http://localhost:8080/api/v1/boards?page=${currentPage}&size=${pageSize}`;
+      let apiUrl = `http://localhost:8080/api/v1/boards?page=${currentPage}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
 
       if (displayMyBoards) {
         apiUrl += `&employeeUuid=${employeeUuid}`;
@@ -140,6 +147,8 @@ function BoardsPage() {
     boardStatus,
     boardTypeUuid,
     employeeUuid,
+    sortOrder,
+    sortBy,
   ]);
 
   const toggleSideMenu = () => {
@@ -186,6 +195,23 @@ function BoardsPage() {
     setShowSearchDialog(false);
   };
 
+  const handleSortButtonClick = (event: React.MouseEvent<HTMLElement>) => {
+    setSortPopoverAnchorEl(event.currentTarget);
+  };
+
+  const closeSortPopover = () => {
+    setSortPopoverAnchorEl(null);
+  };
+
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
+  };
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -218,15 +244,15 @@ function BoardsPage() {
             >
               Search
             </Button>
-            {/* <Button
-                onClick={handleSortButtonClick}
-                startIcon={<SortIcon />}
-                variant="contained"
-              >
-                Sort
-              </Button>
-            </div> */}
-            {/* <div className="boards-buttons-right">
+            <Button
+              onClick={handleSortButtonClick}
+              startIcon={<SortIcon />}
+              variant="contained"
+            >
+              Sort
+            </Button>
+          </div>
+          {/* <div className="boards-buttons-right">
               <Fab
                 size="medium"
                 color="success"
@@ -237,7 +263,7 @@ function BoardsPage() {
                 <PersonAddAltIcon sx={{ mr: 1 }} />
                 New
               </Fab> */}
-          </div>
+          {/* </div> */}
         </div>
         <Paper
           variant="outlined"
@@ -278,7 +304,7 @@ function BoardsPage() {
                         (membership) =>
                           membership.employee.uuid === employeeUuid
                       ) && (
-                        <CardMembershipIcon
+                        <BookmarkAddedIcon
                           style={{ marginTop: "10px" }}
                           color="primary"
                         />
@@ -325,6 +351,14 @@ function BoardsPage() {
         onClose={handleCloseSearchDialog}
         onSearch={handleSearch}
         boardTypes={boardTypes}
+      />
+      <SortBoardComponent
+        anchorEl={sortPopoverAnchorEl}
+        open={Boolean(sortPopoverAnchorEl)}
+        onClose={closeSortPopover}
+        onSort={handleSort}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
       />
     </>
   );
