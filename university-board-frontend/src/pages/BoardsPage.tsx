@@ -293,9 +293,9 @@ function BoardsPage() {
                         {board.name}
                       </Typography>
                       <Typography className="description">{`${board.description}`}</Typography>
-                      <Typography
-                        marginTop={"20px"}
-                      >{`Members: ${board.memberships.length}`}</Typography>
+                      <Typography marginTop={"20px"}>{`Members: ${
+                        board.memberships!.length
+                      }`}</Typography>
                       <Typography className="description">{`Status:  ${
                         Object.values(BoardStatus)[
                           Object.keys(BoardStatus).indexOf(
@@ -303,9 +303,11 @@ function BoardsPage() {
                           )
                         ]
                       }`}</Typography>
-                      <Typography>{`Type: ${board.boardType.name}`}</Typography>
+                      <Typography>{`Type: ${
+                        board.boardType!.name
+                      }`}</Typography>
                       <Typography>{`From: ${board.startDate} To: ${board.endDate}`}</Typography>
-                      {board.memberships.some(
+                      {board.memberships!.some(
                         (membership) =>
                           membership.employee.uuid === employeeUuid
                       ) && (

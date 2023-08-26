@@ -10,11 +10,20 @@ import {
 } from "@mui/material";
 import BoardStatus from "../models/Board";
 
+export type BasicData = {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+};
+
 interface Props {
   onNext: () => void;
+  onBasicDataChange: (basicData: BasicData) => void;
 }
 
-const BasicStep = ({ onNext }: Props) => {
+const BasicStep = ({ onNext, onBasicDataChange }: Props) => {
   const [basicData, setBasicData] = useState({
     name: "",
     description: "",
@@ -53,6 +62,13 @@ const BasicStep = ({ onNext }: Props) => {
     };
     setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error);
+  };
+
+  const handleNext = () => {
+    if (validateForm()) {
+      onBasicDataChange(basicData);
+      onNext();
+    }
   };
 
   return (
@@ -128,11 +144,7 @@ const BasicStep = ({ onNext }: Props) => {
         style={{ marginTop: "20px" }}
         variant="contained"
         color="primary"
-        onClick={() => {
-          if (validateForm()) {
-            onNext();
-          }
-        }}
+        onClick={() => handleNext()}
       >
         Next
       </Button>

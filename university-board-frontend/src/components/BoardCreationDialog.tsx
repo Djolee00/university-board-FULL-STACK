@@ -7,7 +7,8 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import BasicStep from "./BasicStep";
+import BasicStep, { BasicData } from "./BasicStep";
+import BoardStatus, { Board } from "../models/Board";
 
 // import BoardTypeStep from "./BoardTypeStep"; // Component for the second step
 // import MembersStep from "./MembersStep"; //
@@ -21,14 +22,28 @@ interface Props {
 
 function BoardCreationDialog({ open, onClose }: Props) {
   const [activeStep, setActiveStep] = useState(0);
+  let newBoard: Board = {
+    name: null,
+    description: null,
+    startDate: null,
+    endDate: null,
+    status: null,
+    boardType: null, // You can initialize boardType as needed
+    memberships: [],
+    uuid: null,
+  };
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  function handleBasicDataChange(basicData: BasicData) {
+    newBoard.name = basicData.name;
+    newBoard.startDate = basicData.startDate;
+    newBoard.endDate = basicData.endDate;
+    newBoard.status = basicData.status as BoardStatus;
+    newBoard.description = basicData.description;
+  }
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
@@ -47,7 +62,12 @@ function BoardCreationDialog({ open, onClose }: Props) {
           </div>
         ) : (
           <div>
-            {activeStep === 0 && <BasicStep onNext={handleNext} />}
+            {activeStep === 0 && (
+              <BasicStep
+                onNext={handleNext}
+                onBasicDataChange={handleBasicDataChange}
+              />
+            )}
             {/* {activeStep === 1 && <BoardTypeStep onNext={handleNext} />}
             {activeStep === 2 && (
               <MembersStep onNext={handleNext} onBack={handleBack} /> */}

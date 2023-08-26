@@ -1,19 +1,19 @@
 import { Membership } from "./Membership";
 
 export interface BoardType {
-  uuid: string;
-  name: string;
+  uuid: string | null;
+  name: string | null;
 }
 
 export interface Board {
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  status: BoardStatus;
-  boardType: BoardType;
-  uuid: string;
-  memberships: Membership[];
+  name: string | null;
+  description: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  status: BoardStatus | null;
+  boardType: BoardType | null;
+  uuid: string | null;
+  memberships: Membership[] | null;
 }
 
 export enum BoardStatus {

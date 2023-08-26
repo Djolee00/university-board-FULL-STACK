@@ -166,7 +166,7 @@ function BoardSearchComponent({
                 <MenuItem value="">None</MenuItem>
                 {boardTypes.map((type) => {
                   return (
-                    <MenuItem key={type.uuid} value={type.uuid}>
+                    <MenuItem key={type.uuid} value={type.uuid!}>
                       {type.name}
                     </MenuItem>
                   );
