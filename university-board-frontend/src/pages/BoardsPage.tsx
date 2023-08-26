@@ -27,6 +27,7 @@ import SortIcon from "@mui/icons-material/Sort";
 import SortBoardComponent from "../components/SortBoardComponent";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import BoardCreationDialog from "../components/BoardCreationDialog";
+import { Employee } from "../models/Employee";
 
 export interface SearchData {
   name: string | null;
@@ -63,6 +64,7 @@ function BoardsPage() {
 
   const employeeUuid = getStoredUUID();
   const [boardTypes, setBoardTypes] = useState<BoardType[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const pageSize = 9;
 
   useEffect(() => {
@@ -137,8 +139,30 @@ function BoardsPage() {
       }
     };
 
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/employees`,
+          {
+            headers: {
+              Authorization: `Bearer ${getStoredToken()}`,
+            },
+          }
+        );
+        setEmployees(response.data.content);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Error fetching board types from server");
+        }
+        setErrorPopupOpen(true);
+      }
+    };
+
     fetchBoards();
     fetchBoardTypes();
+    fetchEmployees();
     return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -308,7 +332,7 @@ function BoardsPage() {
                       <Typography>{`From: ${board.startDate} To: ${board.endDate}`}</Typography>
                       {board.memberships!.some(
                         (membership) =>
-                          membership.employee.uuid === employeeUuid
+                          membership.employee?.uuid === employeeUuid
                       ) && (
                         <BookmarkAddedIcon
                           style={{ marginTop: "10px" }}
@@ -370,6 +394,7 @@ function BoardsPage() {
         open={createDialogOpen}
         onClose={() => setCreateDialogOpen(false)}
         boardTypes={boardTypes}
+        employees={employees}
       />
     </>
   );

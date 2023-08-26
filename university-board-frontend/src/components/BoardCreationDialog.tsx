@@ -11,6 +11,9 @@ import BasicStep, { BasicData } from "./BasicStep";
 import BoardStatus, { Board, BoardType } from "../models/Board";
 
 import BoardTypeStep from "./BoardTypeStep";
+import { Employee } from "../models/Employee";
+import MembersStep from "./MemberStep";
+import { Membership } from "../models/Membership";
 // import MembersStep from "./MembersStep"; //
 
 const steps = ["Basic Data", "Board Type", "Add Members"];
@@ -19,9 +22,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   boardTypes: BoardType[];
+  employees: Employee[];
 }
 
-function BoardCreationDialog({ open, onClose, boardTypes }: Props) {
+function BoardCreationDialog({ open, onClose, boardTypes, employees }: Props) {
   const [activeStep, setActiveStep] = useState(0);
   const [newBoard, setNewBoard] = useState<Board>({
     name: null,
@@ -34,9 +38,9 @@ function BoardCreationDialog({ open, onClose, boardTypes }: Props) {
     uuid: null,
   });
 
-  // useEffect(() => {
-  //   console.log(newBoard); // This will log the updated value of newBoard
-  // }, [newBoard]);
+  useEffect(() => {
+    console.log(newBoard); // This will log the updated value of newBoard
+  }, [newBoard]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -74,6 +78,13 @@ function BoardCreationDialog({ open, onClose, boardTypes }: Props) {
     }));
   }
 
+  function handleMembershipsChange(memberships: Membership[]) {
+    setNewBoard((prevBoard) => ({
+      ...prevBoard,
+      memberships: memberships,
+    }));
+  }
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <Stepper activeStep={activeStep} style={{ padding: "20px" }}>
@@ -102,6 +113,15 @@ function BoardCreationDialog({ open, onClose, boardTypes }: Props) {
                 boardTypes={boardTypes}
                 onNext={handleNext}
                 handleBoardType={handleBoardTypeChange}
+              />
+            )}
+            {activeStep === 2 && (
+              <MembersStep
+                employees={employees}
+                onNext={handleNext}
+                startDate={newBoard.startDate!}
+                endDate={newBoard.endDate!}
+                handleMemberships={handleMembershipsChange}
               />
             )}
           </div>

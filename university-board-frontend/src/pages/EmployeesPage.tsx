@@ -364,7 +364,7 @@ const EmployeesPage = () => {
                         <IconButton
                           onClick={() => handleOpenDeleteDialog(employee)}
                         >
-                          <DeleteForeverIcon />
+                          <DeleteForeverIcon color="error" />
                         </IconButton>
                       </TableCell>
                     </TableRow>
