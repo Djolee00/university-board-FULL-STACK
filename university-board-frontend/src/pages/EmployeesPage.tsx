@@ -278,7 +278,6 @@ const EmployeesPage = () => {
         refreshSearchFilters();
       })
       .catch((error) => {
-        console.log(error.response);
         setErrorMessage(error.response.data.detail);
         setErrorPopupOpen(true);
         throw error;

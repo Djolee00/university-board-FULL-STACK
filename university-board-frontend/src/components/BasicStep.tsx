@@ -57,7 +57,10 @@ const BasicStep = ({ onNext, onBasicDataChange }: Props) => {
       name: basicData.name === "",
       description: basicData.description === "",
       startDate: basicData.startDate === "",
-      endDate: basicData.endDate === "",
+      endDate:
+        basicData.endDate === "" ||
+        (basicData.startDate !== "" &&
+          new Date(basicData.endDate) < new Date(basicData.startDate)),
       status: basicData.status === "",
     };
     setErrors(newErrors);
@@ -101,6 +104,9 @@ const BasicStep = ({ onNext, onBasicDataChange }: Props) => {
           InputLabelProps={{
             shrink: true,
           }}
+          inputProps={{
+            min: new Date().toISOString().split("T")[0],
+          }}
           error={errors.startDate}
         />
         <TextField
@@ -112,6 +118,9 @@ const BasicStep = ({ onNext, onBasicDataChange }: Props) => {
           margin="normal"
           InputLabelProps={{
             shrink: true,
+          }}
+          inputProps={{
+            min: basicData.startDate,
           }}
           error={errors.endDate}
         />

@@ -127,7 +127,6 @@ function BoardsPage() {
           }
         );
         setBoardTypes(response.data);
-        console.log(boardTypes);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           setErrorMessage(error.response.data.detail);
@@ -370,6 +369,7 @@ function BoardsPage() {
       <BoardCreationDialog
         open={createDialogOpen}
         onClose={() => setCreateDialogOpen(false)}
+        boardTypes={boardTypes}
       />
     </>
   );

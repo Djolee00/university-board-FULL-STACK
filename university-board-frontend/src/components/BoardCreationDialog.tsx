@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   Stepper,
@@ -8,9 +8,9 @@ import {
   Typography,
 } from "@mui/material";
 import BasicStep, { BasicData } from "./BasicStep";
-import BoardStatus, { Board } from "../models/Board";
+import BoardStatus, { Board, BoardType } from "../models/Board";
 
-// import BoardTypeStep from "./BoardTypeStep"; // Component for the second step
+import BoardTypeStep from "./BoardTypeStep";
 // import MembersStep from "./MembersStep"; //
 
 const steps = ["Basic Data", "Board Type", "Add Members"];
@@ -18,31 +18,60 @@ const steps = ["Basic Data", "Board Type", "Add Members"];
 interface Props {
   open: boolean;
   onClose: () => void;
+  boardTypes: BoardType[];
 }
 
-function BoardCreationDialog({ open, onClose }: Props) {
+function BoardCreationDialog({ open, onClose, boardTypes }: Props) {
   const [activeStep, setActiveStep] = useState(0);
-  let newBoard: Board = {
+  const [newBoard, setNewBoard] = useState<Board>({
     name: null,
     description: null,
     startDate: null,
     endDate: null,
     status: null,
-    boardType: null, // You can initialize boardType as needed
+    boardType: null,
     memberships: [],
     uuid: null,
-  };
+  });
+
+  // useEffect(() => {
+  //   console.log(newBoard); // This will log the updated value of newBoard
+  // }, [newBoard]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   function handleBasicDataChange(basicData: BasicData) {
-    newBoard.name = basicData.name;
-    newBoard.startDate = basicData.startDate;
-    newBoard.endDate = basicData.endDate;
-    newBoard.status = basicData.status as BoardStatus;
-    newBoard.description = basicData.description;
+    setNewBoard((prevBoard) => ({
+      ...prevBoard,
+      name: basicData.name,
+      description: basicData.description,
+      startDate: basicData.startDate,
+      endDate: basicData.endDate,
+      status: basicData.status as BoardStatus,
+    }));
+  }
+
+  useEffect(() => {
+    setActiveStep(0);
+    setNewBoard({
+      name: null,
+      description: null,
+      startDate: null,
+      endDate: null,
+      status: null,
+      boardType: null,
+      memberships: [],
+      uuid: null,
+    });
+  }, [open]);
+
+  function handleBoardTypeChange(boardType: BoardType) {
+    setNewBoard((prevBoard) => ({
+      ...prevBoard,
+      boardType: boardType,
+    }));
   }
 
   return (
@@ -68,10 +97,13 @@ function BoardCreationDialog({ open, onClose }: Props) {
                 onBasicDataChange={handleBasicDataChange}
               />
             )}
-            {/* {activeStep === 1 && <BoardTypeStep onNext={handleNext} />}
-            {activeStep === 2 && (
-              <MembersStep onNext={handleNext} onBack={handleBack} /> */}
-            {/* )} */}
+            {activeStep === 1 && (
+              <BoardTypeStep
+                boardTypes={boardTypes}
+                onNext={handleNext}
+                handleBoardType={handleBoardTypeChange}
+              />
+            )}
           </div>
         )}
       </div>
