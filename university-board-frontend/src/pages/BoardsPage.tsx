@@ -9,6 +9,7 @@ import {
   Button,
   Paper,
   Fab,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
@@ -240,6 +241,40 @@ function BoardsPage() {
     }
   };
 
+  function refreshSearchFilters() {
+    setName(name === "" ? null : "");
+    setStartDate(null);
+    setEndDate(null);
+    setBoardStatus(null);
+    setBoardTypeUuid(null);
+    setCurrentPage(0);
+  }
+
+  async function createBoard(board: Board): Promise<void> {
+    console.log(board);
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/boards`,
+        board,
+        {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        }
+      );
+      setSuccessMessage("Board successfully saved");
+      setSuccessPopupOpen(true);
+      refreshSearchFilters();
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setErrorMessage(error.response.data.detail);
+      } else {
+        setErrorMessage("Error fetching board types from server");
+      }
+      setErrorPopupOpen(true);
+    }
+  }
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -395,6 +430,7 @@ function BoardsPage() {
         onClose={() => setCreateDialogOpen(false)}
         boardTypes={boardTypes}
         employees={employees}
+        onCreate={createBoard}
       />
     </>
   );

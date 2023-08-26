@@ -289,6 +289,7 @@ const EmployeesPage = () => {
     setLastName(null);
     setAcademicTitle(null);
     setPhoneNumber(null);
+    setCurrentPage(0);
   };
 
   return (

@@ -6,6 +6,7 @@ import {
   StepLabel,
   Button,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import BasicStep, { BasicData } from "./BasicStep";
 import BoardStatus, { Board, BoardType } from "../models/Board";
@@ -14,7 +15,7 @@ import BoardTypeStep from "./BoardTypeStep";
 import { Employee } from "../models/Employee";
 import MembersStep from "./MemberStep";
 import { Membership } from "../models/Membership";
-// import MembersStep from "./MembersStep"; //
+import "../styles/EmployeesStyles.css";
 
 const steps = ["Basic Data", "Board Type", "Add Members"];
 
@@ -23,9 +24,16 @@ interface Props {
   onClose: () => void;
   boardTypes: BoardType[];
   employees: Employee[];
+  onCreate: (board: Board) => Promise<void>;
 }
 
-function BoardCreationDialog({ open, onClose, boardTypes, employees }: Props) {
+function BoardCreationDialog({
+  open,
+  onClose,
+  boardTypes,
+  employees,
+  onCreate,
+}: Props) {
   const [activeStep, setActiveStep] = useState(0);
   const [newBoard, setNewBoard] = useState<Board>({
     name: null,
@@ -37,9 +45,14 @@ function BoardCreationDialog({ open, onClose, boardTypes, employees }: Props) {
     memberships: [],
     uuid: null,
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(newBoard); // This will log the updated value of newBoard
+    console.log(newBoard);
+    if (newBoard.memberships?.length !== 0) {
+      handleOnCreate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newBoard]);
 
   const handleNext = () => {
@@ -85,6 +98,12 @@ function BoardCreationDialog({ open, onClose, boardTypes, employees }: Props) {
     }));
   }
 
+  async function handleOnCreate() {
+    setLoading(true);
+    await onCreate(newBoard);
+    setLoading(false);
+  }
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <Stepper activeStep={activeStep} style={{ padding: "20px" }}>
@@ -98,7 +117,13 @@ function BoardCreationDialog({ open, onClose, boardTypes, employees }: Props) {
         {activeStep === steps.length ? (
           <div>
             <Typography>All steps completed</Typography>
-            <Button onClick={onClose}>Close</Button>
+            <Button
+              onClick={onClose}
+              variant="contained"
+              style={{ marginTop: "20px" }}
+            >
+              Close
+            </Button>
           </div>
         ) : (
           <div>
@@ -122,11 +147,17 @@ function BoardCreationDialog({ open, onClose, boardTypes, employees }: Props) {
                 startDate={newBoard.startDate!}
                 endDate={newBoard.endDate!}
                 handleMemberships={handleMembershipsChange}
+                onCreate={handleOnCreate}
               />
             )}
           </div>
         )}
       </div>
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
     </Dialog>
   );
 }

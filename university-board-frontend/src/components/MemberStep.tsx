@@ -20,6 +20,7 @@ interface MembersStepProps {
   endDate: string;
   onNext: () => void;
   handleMemberships: (memberships: Membership[]) => void;
+  onCreate: () => void;
 }
 
 function MembersStep({
@@ -28,6 +29,7 @@ function MembersStep({
   endDate,
   onNext,
   handleMemberships,
+  onCreate,
 }: MembersStepProps) {
   const [selectedMemberships, setSelectedMemberships] = useState<Membership[]>(
     []
