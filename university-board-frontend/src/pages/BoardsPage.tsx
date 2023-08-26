@@ -8,6 +8,7 @@ import {
   Grid,
   Button,
   Paper,
+  Fab,
 } from "@mui/material";
 import axios from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
@@ -24,6 +25,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import BoardSearchComponent from "../components/BoardSearchComponent";
 import SortIcon from "@mui/icons-material/Sort";
 import SortBoardComponent from "../components/SortBoardComponent";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import BoardCreationDialog from "../components/BoardCreationDialog";
 
 export interface SearchData {
   name: string | null;
@@ -55,6 +58,8 @@ function BoardsPage() {
     useState<HTMLElement | null>(null);
   const [sortBy, setSortBy] = useState<string>("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const employeeUuid = getStoredUUID();
   const [boardTypes, setBoardTypes] = useState<BoardType[]>([]);
@@ -252,18 +257,18 @@ function BoardsPage() {
               Sort
             </Button>
           </div>
-          {/* <div className="boards-buttons-right">
-              <Fab
-                size="medium"
-                color="success"
-                aria-label="add"
-                variant="extended"
-                onClick={() => setCreateDialogOpen(true)}
-              >
-                <PersonAddAltIcon sx={{ mr: 1 }} />
-                New
-              </Fab> */}
-          {/* </div> */}
+          <div className="boards-buttons-right">
+            <Fab
+              size="medium"
+              color="success"
+              aria-label="add"
+              variant="extended"
+              onClick={() => setCreateDialogOpen(true)}
+            >
+              <NoteAddIcon sx={{ mr: 1 }} />
+              New
+            </Fab>
+          </div>
         </div>
         <Paper
           variant="outlined"
@@ -359,6 +364,10 @@ function BoardsPage() {
         onSort={handleSort}
         sortBy={sortBy}
         sortOrder={sortOrder}
+      />
+      <BoardCreationDialog
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
       />
     </>
   );
