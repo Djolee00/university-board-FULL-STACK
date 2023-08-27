@@ -16,6 +16,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  ToggleButtonGroup,
+  ToggleButton,
 } from "@mui/material";
 import axios from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
@@ -25,6 +27,9 @@ import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
 import SuccessPopup from "../components/SuccessPopup";
 import "../styles/EmployeesStyles.css";
+import MembersComponent from "../components/MembersComponent";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function BoardDetailsPage() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -50,6 +55,7 @@ function BoardDetailsPage() {
     name: false,
     description: false,
   });
+  const [selectedSection, setSelectedSection] = useState("members");
 
   const navigate = useNavigate();
 
@@ -219,6 +225,17 @@ function BoardDetailsPage() {
     setConfirmDeleteDialogOpen(false);
   };
 
+  const handleSectionChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newSection: string
+  ) => {
+    setSelectedSection(newSection);
+  };
+
+  function deleteMember(uuid: string): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -341,7 +358,7 @@ function BoardDetailsPage() {
               padding: "20px",
               marginTop: "20px",
               marginRight: "100px",
-              maxWidth: "400px",
+              maxWidth: "150px",
             }}
           >
             {isEditMode ? (
@@ -368,6 +385,7 @@ function BoardDetailsPage() {
                   color="primary"
                   onClick={handleEditModeToggle}
                 >
+                  <EditIcon fontSize="small" />
                   Edit
                 </Button>
                 <Button
@@ -379,6 +397,7 @@ function BoardDetailsPage() {
                   color="error"
                   onClick={handleDeleteBoard}
                 >
+                  <DeleteIcon fontSize="small" />
                   Delete
                 </Button>
               </>
@@ -386,6 +405,32 @@ function BoardDetailsPage() {
           </div>
         </Grid>
       </Grid>
+      <ToggleButtonGroup
+        value={selectedSection}
+        exclusive
+        onChange={handleSectionChange}
+        style={{
+          marginBottom: "20px",
+          display: "flex",
+          marginLeft: "25px",
+        }}
+        color="primary"
+      >
+        <ToggleButton value="members">Members</ToggleButton>
+        <ToggleButton value="comments">Comments</ToggleButton>
+        <ToggleButton value="files">Files</ToggleButton>
+      </ToggleButtonGroup>
+      {selectedSection === "members" && board?.memberships && (
+        <MembersComponent
+          members={board?.memberships}
+          onDeleteMember={deleteMember}
+        />
+      )}
+      {/* {selectedSection === "comments" && (
+        <Comments comments={board?.comments} />
+      )} */}
+      {/* {selectedSection === "files" && <Files files={board?.boardFiles} />} */}
+
       <ErrorPopup
         open={errorPopupOpen}
         message={errorMessage}

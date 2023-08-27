@@ -53,6 +53,7 @@ function MembersStep({
         setSelectedMemberships((prevMemberships) => [
           ...prevMemberships,
           {
+            uuid: null,
             employeeUuid: employeeUuid,
             employee: employee,
             commencementDate: startDate,

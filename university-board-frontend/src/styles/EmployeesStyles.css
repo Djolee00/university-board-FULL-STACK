@@ -65,3 +65,28 @@
   align-items: center;
   margin: 10px;
 }
+
+.member-table-container {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 25px;
+  min-height: 550px;
+  background-color: #f9f9f9;
+}
+
+.member-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.member-table th,
+.member-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.member-table th {
+  background-color: #f2f2f2;
+}
