@@ -9,7 +9,6 @@ import {
   Button,
   Paper,
   Fab,
-  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
@@ -253,15 +252,11 @@ function BoardsPage() {
   async function createBoard(board: Board): Promise<void> {
     console.log(board);
     try {
-      const response = await axios.post(
-        `http://localhost:8080/api/v1/boards`,
-        board,
-        {
-          headers: {
-            Authorization: `Bearer ${getStoredToken()}`,
-          },
-        }
-      );
+      await axios.post(`http://localhost:8080/api/v1/boards`, board, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      });
       setSuccessMessage("Board successfully saved");
       setSuccessPopupOpen(true);
       refreshSearchFilters();
