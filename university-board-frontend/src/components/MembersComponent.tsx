@@ -13,19 +13,38 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import { Membership, MembershipStatus } from "../models/Membership";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Cancel";
+import BoardStatus from "../models/Board";
 
 interface Props {
   members: Membership[];
   onDeleteMember: (uuid: string) => void;
+  onSaveEdit: (member: Membership) => Promise<void>;
+  startDate: string;
+  endDate: string;
 }
 
-function MembersComponent({ members, onDeleteMember }: Props) {
+function MembersComponent({
+  members,
+  onDeleteMember,
+  onSaveEdit,
+  startDate,
+  endDate,
+}: Props) {
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState<Membership | null>(null);
+  const [editModeMembers, setEditModeMembers] = useState<
+    Record<string, boolean>
+  >({});
+  const [editedMemberships, setEditedMemberships] =
+    useState<Membership[]>(members);
 
   const handleDeleteConfirmationOpen = (member: Membership) => {
     setMemberToDelete(member);
@@ -36,6 +55,54 @@ function MembersComponent({ members, onDeleteMember }: Props) {
     setMemberToDelete(null);
     setDeleteConfirmationOpen(false);
   };
+
+  const handleEdit = (uuid: string) => {
+    setEditModeMembers((prevEditModeMembers) => ({
+      ...prevEditModeMembers,
+      [uuid]: true,
+    }));
+  };
+
+  const handleSaveEdit = (uuid: string) => {
+    setEditModeMembers((prevEditModeMembers) => ({
+      ...prevEditModeMembers,
+      [uuid]: false,
+    }));
+    onSaveEdit(editedMemberships.filter((em) => em.uuid === uuid).at(0)!);
+  };
+
+  const handleCancelEdit = (uuid: string) => {
+    setEditModeMembers((prevEditModeMembers) => ({
+      ...prevEditModeMembers,
+      [uuid]: false,
+    }));
+
+    setEditedMemberships((prevEditedMemberships) => {
+      const membershipIndex = prevEditedMemberships.findIndex(
+        (m) => m.uuid === uuid
+      );
+      if (membershipIndex !== -1) {
+        const updatedMemberships = [...prevEditedMemberships];
+        updatedMemberships[membershipIndex] = members.find(
+          (m) => m.uuid === uuid
+        )!;
+        return updatedMemberships;
+      }
+      return prevEditedMemberships;
+    });
+  };
+
+  function handleFieldChange(uuid: string | null, value: any, field: string) {
+    setEditedMemberships((prevEditedMemberships) => {
+      const updatedMemberships = prevEditedMemberships.map((em) => {
+        if (em.uuid === uuid) {
+          return { ...em, [field]: value };
+        }
+        return em;
+      });
+      return updatedMemberships;
+    });
+  }
 
   return (
     <div className="member-table-container">
@@ -57,27 +124,99 @@ function MembersComponent({ members, onDeleteMember }: Props) {
                 <TableCell>{member.employee!.firstName}</TableCell>
                 <TableCell>{member.employee!.lastName}</TableCell>
                 <TableCell>{member.employee!.userProfile!.email}</TableCell>
-                <TableCell>{member.commencementDate}</TableCell>
                 <TableCell>
-                  {
+                  {editModeMembers[member.uuid!] ? (
+                    <TextField
+                      type="date"
+                      value={
+                        editedMemberships
+                          .filter((em) => em.uuid === member.uuid)
+                          .at(0)?.commencementDate
+                      }
+                      onChange={(e) => {
+                        handleFieldChange(
+                          member.uuid,
+                          e.target.value,
+                          "commencementDate"
+                        );
+                      }}
+                      inputProps={{
+                        min:
+                          new Date(startDate) < new Date()
+                            ? new Date().toISOString().split("T")[0]
+                            : startDate,
+                        max: endDate,
+                      }}
+                    />
+                  ) : (
+                    member.commencementDate
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editModeMembers[member.uuid!] ? (
+                    <TextField
+                      select
+                      value={
+                        editedMemberships
+                          .filter((em) => em.uuid === member.uuid)
+                          .at(0)?.status
+                      }
+                      onChange={(e) => {
+                        handleFieldChange(
+                          member.uuid,
+                          e.target.value,
+                          "status"
+                        );
+                      }}
+                    >
+                      {Object.keys(MembershipStatus).map((statusKey, index) => {
+                        const statusValue =
+                          Object.values(MembershipStatus)[index];
+                        return (
+                          <MenuItem key={statusKey} value={statusKey}>
+                            {statusValue}
+                          </MenuItem>
+                        );
+                      })}
+                    </TextField>
+                  ) : (
                     Object.values(MembershipStatus)[
                       Object.keys(MembershipStatus).indexOf(member.status!)
                     ]
-                  }
+                  )}
                 </TableCell>
                 <TableCell align="center">
-                  <IconButton
-                    // onClick={() => onEdit(member.uuid!)}
-                    aria-label="edit"
-                  >
-                    <EditIcon color="primary" />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleDeleteConfirmationOpen(member)}
-                    aria-label="delete"
-                  >
-                    <DeleteForeverIcon color="error" />
-                  </IconButton>
+                  {editModeMembers[member.uuid!] ? (
+                    <>
+                      <IconButton
+                        onClick={() => handleSaveEdit(member.uuid!)}
+                        aria-label="save"
+                      >
+                        <SaveIcon color="primary" />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleCancelEdit(member.uuid!)}
+                        aria-label="cancel"
+                      >
+                        <CancelIcon color="error" />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <>
+                      <IconButton
+                        onClick={() => handleEdit(member.uuid!)}
+                        aria-label="edit"
+                      >
+                        <EditIcon color="primary" />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleDeleteConfirmationOpen(member)}
+                        aria-label="delete"
+                      >
+                        <DeleteForeverIcon color="error" />
+                      </IconButton>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

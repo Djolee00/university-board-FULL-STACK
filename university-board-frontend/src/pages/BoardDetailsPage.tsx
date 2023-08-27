@@ -30,6 +30,7 @@ import "../styles/EmployeesStyles.css";
 import MembersComponent from "../components/MembersComponent";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Membership } from "../models/Membership";
 
 function BoardDetailsPage() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -273,6 +274,42 @@ function BoardDetailsPage() {
       });
   }
 
+  async function handleSaveEdit(member: Membership): Promise<void> {
+    await axios
+      .patch(
+        `http://localhost:8080/api/v1/boards/${board!.uuid}/memberships/${
+          member.uuid
+        }`,
+        { commencementDate: member.commencementDate, status: member.status },
+        {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccessMessage("Membership successfully updated");
+        setSuccessPopupOpen(true);
+        setBoard((prevBoard) => {
+          const updatedMemberships = prevBoard!.memberships!.map((m) =>
+            m.uuid === member.uuid ? member : m
+          );
+          return {
+            ...prevBoard!,
+            memberships: updatedMemberships,
+          };
+        });
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data.detail);
+        } else {
+          setErrorMessage("Error occured while deleting membership.");
+        }
+        setErrorPopupOpen(true);
+      });
+  }
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -461,6 +498,9 @@ function BoardDetailsPage() {
         <MembersComponent
           members={board?.memberships}
           onDeleteMember={handleMemberDeletion}
+          startDate={board?.startDate!}
+          endDate={board?.endDate!}
+          onSaveEdit={handleSaveEdit}
         />
       )}
       {/* {selectedSection === "comments" && (
