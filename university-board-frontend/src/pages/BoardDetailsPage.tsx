@@ -232,8 +232,45 @@ function BoardDetailsPage() {
     setSelectedSection(newSection);
   };
 
-  function deleteMember(uuid: string): void {
-    throw new Error("Function not implemented.");
+  async function handleMemberDeletion(uuid: string) {
+    if (board!.memberships!.length < 2) {
+      setErrorMessage("Board must have at least 1 member");
+      setErrorPopupOpen(true);
+    } else {
+      await deleteMember(uuid);
+    }
+  }
+
+  async function deleteMember(uuid: string) {
+    await axios
+      .delete(
+        `http://localhost:8080/api/v1/boards/${
+          board!.uuid
+        }/memberships/${uuid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccessMessage("Membership successfully deleted");
+        setSuccessPopupOpen(true);
+        setBoard((prevBoard) => ({
+          ...prevBoard!,
+          memberships: prevBoard!.memberships!.filter(
+            (member) => member.uuid !== uuid
+          )!,
+        }));
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data.detail);
+        } else {
+          setErrorMessage("Error occured while deleting membership.");
+        }
+        setErrorPopupOpen(true);
+      });
   }
 
   return (
@@ -423,7 +460,7 @@ function BoardDetailsPage() {
       {selectedSection === "members" && board?.memberships && (
         <MembersComponent
           members={board?.memberships}
-          onDeleteMember={deleteMember}
+          onDeleteMember={handleMemberDeletion}
         />
       )}
       {/* {selectedSection === "comments" && (
