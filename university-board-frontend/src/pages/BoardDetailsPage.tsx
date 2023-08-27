@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Paper,
   Typography,
@@ -12,8 +12,12 @@ import {
   MenuItem,
   Autocomplete,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
 import ErrorPopup from "../components/ErrorPopup";
 import { getStoredToken } from "../utils/AuthUtils";
@@ -36,9 +40,9 @@ function BoardDetailsPage() {
 
   const [boardTypes, setBoardTypes] = useState<BoardType[]>([]);
   const [editingBoard, setEditingBoard] = useState<Board | null>(null);
-
   const [newBoardTypeName, setNewBoardTypeName] = useState<string | null>("");
   const [isTexFieldEmpty, setIsTextFieldEmpty] = useState<boolean>(true);
+  const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -46,6 +50,8 @@ function BoardDetailsPage() {
     name: false,
     description: false,
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -176,6 +182,41 @@ function BoardDetailsPage() {
     };
     setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error);
+  };
+
+  function handleDeleteBoard() {
+    setConfirmDeleteDialogOpen(true);
+  }
+
+  async function deleteBoard() {
+    await axios
+      .delete(`http://localhost:8080/api/v1/boards/${board!.uuid}`, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
+      .then((response) => {
+        setSuccessMessage("Board successfully deleted");
+        setSuccessPopupOpen(true);
+
+        setTimeout(() => {
+          setSuccessPopupOpen(false);
+          navigate("/boards");
+        }, 1000);
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data.detail);
+        } else {
+          setErrorMessage("Error occured while deleting board.");
+        }
+        setErrorPopupOpen(true);
+      })
+      .finally(() => setConfirmDeleteDialogOpen(false));
+  }
+
+  const handleCloseConfirmDelete = () => {
+    setConfirmDeleteDialogOpen(false);
   };
 
   return (
@@ -336,7 +377,7 @@ function BoardDetailsPage() {
                     borderColor: "#f44336",
                   }}
                   color="error"
-                  //   onClick={handleDeleteBoard}
+                  onClick={handleDeleteBoard}
                 >
                   Delete
                 </Button>
@@ -360,6 +401,25 @@ function BoardDetailsPage() {
           <CircularProgress />
         </div>
       )}
+      <Dialog open={confirmDeleteDialogOpen} onClose={handleCloseConfirmDelete}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this board? All comments and files
+          will be deleted.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseConfirmDelete}
+            color="primary"
+            variant="outlined"
+          >
+            No
+          </Button>
+          <Button onClick={deleteBoard} color="error" variant="outlined">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
