@@ -11,13 +11,16 @@ import {
   Select,
   MenuItem,
   Autocomplete,
+  CircularProgress,
 } from "@mui/material";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
 import ErrorPopup from "../components/ErrorPopup";
 import { getStoredToken } from "../utils/AuthUtils";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
+import SuccessPopup from "../components/SuccessPopup";
+import "../styles/EmployeesStyles.css";
 
 function BoardDetailsPage() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -25,12 +28,24 @@ function BoardDetailsPage() {
 
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [successPopupOpen, setSuccessPopupOpen] = useState<boolean>(false);
 
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [boardTypes, setBoardTypes] = useState<BoardType[]>([]);
   const [editingBoard, setEditingBoard] = useState<Board | null>(null);
+
+  const [newBoardTypeName, setNewBoardTypeName] = useState<string | null>("");
+  const [isTexFieldEmpty, setIsTextFieldEmpty] = useState<boolean>(true);
+
+  const [loading, setLoading] = useState(false);
+
+  const [errors, setErrors] = useState({
+    name: false,
+    description: false,
+  });
 
   useEffect(() => {
     axios
@@ -49,22 +64,10 @@ function BoardDetailsPage() {
         } else {
           setErrorMessage("Error fetching board types from server");
         }
+        setErrorPopupOpen(true);
       });
 
-    axios
-      .get<BoardType[]>(`http://localhost:8080/api/v1/board-types`, {
-        headers: {
-          Authorization: `Bearer ${getStoredToken()}`,
-        },
-      })
-      .then((response) => setBoardTypes(response.data))
-      .catch((error) => {
-        if (error.response) {
-          setErrorMessage(error.response.data.detail);
-        } else {
-          setErrorMessage("Error fetching board types from server");
-        }
-      });
+    fetchBoardTypes();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid]);
@@ -81,19 +84,98 @@ function BoardDetailsPage() {
     if (isEditMode) {
       setEditingBoard(board);
     }
+    setNewBoardTypeName("");
+    setIsTextFieldEmpty(true);
     setIsEditMode(!isEditMode);
   };
 
-  const handleSaveChanges = () => {
-    setBoard(editingBoard);
-    setIsEditMode(false);
-  };
+  async function fetchBoardTypes() {
+    await axios
+      .get<BoardType[]>(`http://localhost:8080/api/v1/board-types`, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
+      .then((response) => setBoardTypes(response.data))
+      .catch((error) => {
+        if (error.response) {
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Error fetching board types from server");
+        }
+        setErrorPopupOpen(true);
+      });
+  }
+
+  async function handleSaveChanges() {
+    let updatedBoard = { ...editingBoard };
+    if (validateForm()) {
+      setLoading(true);
+      if (!isTexFieldEmpty) {
+        const newBoardType = { uuid: null, name: newBoardTypeName };
+        updatedBoard = { ...updatedBoard, boardType: newBoardType };
+      }
+      await updateBoard(updatedBoard);
+      setIsEditMode(false);
+      setLoading(false);
+    }
+  }
+
+  async function updateBoard(newBoard: any) {
+    await axios
+      .patch<Board>(
+        `http://localhost:8080/api/v1/boards/${board!.uuid}`,
+        newBoard,
+        {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        setBoard(response.data);
+        setEditingBoard(response.data);
+        setSuccessMessage("Board successfully updated");
+        setSuccessPopupOpen(true);
+        fetchBoardTypes();
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data.detail);
+        } else {
+          setErrorMessage("Error fetching board information from server");
+        }
+        setErrorPopupOpen(true);
+      });
+  }
 
   const handleFieldChange = (fieldName: keyof Board, value: any) => {
     setEditingBoard((board) => ({
       ...board!,
       [fieldName]: value,
     }));
+  };
+
+  const handleNewBoardTypeTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+    if (value.trim().length === 0) {
+      setIsTextFieldEmpty(true);
+      setNewBoardTypeName(value);
+    } else {
+      setIsTextFieldEmpty(false);
+      setNewBoardTypeName(value);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: editingBoard!.name === "",
+      description: editingBoard!.description === "",
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error);
   };
 
   return (
@@ -112,6 +194,7 @@ function BoardDetailsPage() {
                   onChange={(e) =>
                     handleFieldChange("name", e.target.value as string)
                   }
+                  error={errors.name}
                 />
               ) : (
                 editingBoard?.name
@@ -127,6 +210,7 @@ function BoardDetailsPage() {
               onChange={(e) =>
                 handleFieldChange("description", e.target.value as string)
               }
+              error={errors.description}
             />
             <Grid container spacing={2} marginTop="25px">
               <Grid item xs={12} sm={6}>
@@ -182,7 +266,7 @@ function BoardDetailsPage() {
                   onChange={(event, newValue) => {
                     handleFieldChange("boardType", newValue);
                   }}
-                  disabled={!isEditMode}
+                  disabled={!isEditMode || !isTexFieldEmpty}
                   renderInput={(params) => (
                     <TextField {...params} label="Existing Board Type" />
                   )}
@@ -190,6 +274,19 @@ function BoardDetailsPage() {
                     return v1.uuid === v2.uuid;
                   }}
                 />
+                <>
+                  {isEditMode ? (
+                    <TextField
+                      style={{ marginTop: "20px" }}
+                      label="New Board Type"
+                      value={newBoardTypeName}
+                      onChange={handleNewBoardTypeTextFieldChange}
+                      fullWidth
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </>
               </Grid>
             </Grid>
           </Paper>
@@ -253,6 +350,16 @@ function BoardDetailsPage() {
         message={errorMessage}
         onClose={closeErrorPopup}
       />
+      <SuccessPopup
+        open={successPopupOpen}
+        message={successMessage}
+        onClose={() => setSuccessPopupOpen(false)}
+      />
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
     </>
   );
 }

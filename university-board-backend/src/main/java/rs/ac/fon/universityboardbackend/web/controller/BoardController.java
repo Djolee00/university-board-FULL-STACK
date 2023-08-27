@@ -70,7 +70,7 @@ public class BoardController extends AbstractController {
     }
 
     @PatchMapping("/{uuid}")
-    public ResponseEntity<Void> updateBoard(
+    public ResponseEntity<BoardResponseDto> updateBoard(
             @PathVariable UUID uuid, @RequestBody BoardBaseDto boardBaseDto) {
         hasPrivilegeOrThrow(PrivilegeCode.BOARD_W);
 
@@ -89,9 +89,10 @@ public class BoardController extends AbstractController {
         Optional.ofNullable(boardBaseDto.getDescription()).ifPresent(board::setDescription);
         Optional.ofNullable(boardBaseDto.getStartDate()).ifPresent(board::setStartDate);
         Optional.ofNullable(boardBaseDto.getEndDate()).ifPresent(board::setEndDate);
+        Optional.ofNullable(boardBaseDto.getStatus()).ifPresent(board::setStatus);
 
         boardService.saveOrUpdate(board);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(boardMapper.boardToBoardResponseDto(board));
     }
 
     @DeleteMapping("/{uuid}")
