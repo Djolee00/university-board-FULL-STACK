@@ -48,7 +48,6 @@ function BoardCreationDialog({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(newBoard);
     if (newBoard.memberships?.length !== 0) {
       handleOnCreate();
     }

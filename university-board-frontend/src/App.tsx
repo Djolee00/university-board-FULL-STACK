@@ -7,6 +7,7 @@ import EmployeesPage from "./pages/EmployeesPage";
 import BoardsPage from "./pages/BoardsPage";
 import { useEffect } from "react";
 import { clearStorage, getStoredToken } from "./utils/AuthUtils";
+import BoardDetailsPage from "./pages/BoardDetailsPage";
 
 function App() {
   const navigate = useNavigate();
@@ -38,6 +39,14 @@ function App() {
     <Routes>
       <Route path="/" element={<Navigate to="/boards" />} />
       <Route path="/login" element={<Login />} />
+      <Route
+        path="/boards/:uuid"
+        element={
+          <ProtectedRoute>
+            <BoardDetailsPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/boards"
         element={

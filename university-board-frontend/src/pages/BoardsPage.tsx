@@ -28,6 +28,7 @@ import SortBoardComponent from "../components/SortBoardComponent";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import BoardCreationDialog from "../components/BoardCreationDialog";
 import { Employee } from "../models/Employee";
+import { Link } from "react-router-dom";
 
 export interface SearchData {
   name: string | null;
@@ -250,7 +251,6 @@ function BoardsPage() {
   }
 
   async function createBoard(board: Board): Promise<void> {
-    console.log(board);
     try {
       await axios.post(`http://localhost:8080/api/v1/boards`, board, {
         headers: {
@@ -333,44 +333,50 @@ function BoardsPage() {
             <Grid container spacing={2} padding={"20px"}>
               {boards.map((board) => (
                 <Grid item xs={12} sm={6} md={4} key={board.uuid}>
-                  <Card
-                    style={{
-                      backgroundColor: "#f9f9f9",
-                      boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
-                      maxHeight: "230px",
-                      minHeight: "230px",
-                    }}
+                  <Link
+                    to={`/boards/${board.uuid}`}
+                    style={{ textDecoration: "none" }}
                   >
-                    <CardContent>
-                      <Typography variant="h6" fontWeight={"bold"}>
-                        {board.name}
-                      </Typography>
-                      <Typography className="description">{`${board.description}`}</Typography>
-                      <Typography marginTop={"20px"}>{`Members: ${
-                        board.memberships!.length
-                      }`}</Typography>
-                      <Typography className="description">{`Status:  ${
-                        Object.values(BoardStatus)[
-                          Object.keys(BoardStatus).indexOf(
-                            board.status as string
-                          )
-                        ]
-                      }`}</Typography>
-                      <Typography>{`Type: ${
-                        board.boardType!.name
-                      }`}</Typography>
-                      <Typography>{`From: ${board.startDate} To: ${board.endDate}`}</Typography>
-                      {board.memberships!.some(
-                        (membership) =>
-                          membership.employee?.uuid === employeeUuid
-                      ) && (
-                        <BookmarkAddedIcon
-                          style={{ marginTop: "10px" }}
-                          color="primary"
-                        />
-                      )}
-                    </CardContent>
-                  </Card>
+                    <Card
+                      style={{
+                        backgroundColor: "#f9f9f9",
+                        boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
+                        maxHeight: "230px",
+                        minHeight: "230px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <CardContent>
+                        <Typography variant="h6" fontWeight={"bold"}>
+                          {board.name}
+                        </Typography>
+                        <Typography className="description">{`${board.description}`}</Typography>
+                        <Typography marginTop={"20px"}>{`Members: ${
+                          board.memberships!.length
+                        }`}</Typography>
+                        <Typography className="description">{`Status:  ${
+                          Object.values(BoardStatus)[
+                            Object.keys(BoardStatus).indexOf(
+                              board.status as string
+                            )
+                          ]
+                        }`}</Typography>
+                        <Typography>{`Type: ${
+                          board.boardType!.name
+                        }`}</Typography>
+                        <Typography>{`From: ${board.startDate} To: ${board.endDate}`}</Typography>
+                        {board.memberships!.some(
+                          (membership) =>
+                            membership.employee?.uuid === employeeUuid
+                        ) && (
+                          <BookmarkAddedIcon
+                            style={{ marginTop: "10px" }}
+                            color="primary"
+                          />
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Link>
                 </Grid>
               ))}
             </Grid>
