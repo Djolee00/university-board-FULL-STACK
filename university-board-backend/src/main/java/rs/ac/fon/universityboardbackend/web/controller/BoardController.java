@@ -158,7 +158,7 @@ public class BoardController extends AbstractController {
     }
 
     @PostMapping("/{boardUuid}/memberships")
-    public ResponseEntity<Void> addMembership(
+    public ResponseEntity<UUID> addMembership(
             @PathVariable UUID boardUuid,
             @RequestBody @Valid MembershipCreateDto membershipCreateDto) {
         hasPrivilegeOrThrow(PrivilegeCode.BOARD_W);
@@ -169,7 +169,7 @@ public class BoardController extends AbstractController {
 
         board.addMembership(membership);
         boardService.saveOrUpdate(board);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(membership.getUuid());
     }
 
     @PatchMapping("/{boardUuid}/memberships/{uuid}")
