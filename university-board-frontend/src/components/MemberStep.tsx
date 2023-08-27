@@ -13,6 +13,8 @@ import {
 import { Employee } from "../models/Employee";
 import { Membership, MembershipStatus } from "../models/Membership";
 import ErrorPopup from "./ErrorPopup";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface MembersStepProps {
   employees: Employee[];
@@ -37,6 +39,11 @@ function MembersStep({
   const [showErrors, setShowErrors] = useState<boolean>(false);
   const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>("");
+
+  const filteredEmployees = employees.filter((employee) =>
+    employee.firstName!.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
   const handleCheckboxChange =
     (employee: Employee) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,9 +127,26 @@ function MembersStep({
 
   return (
     <>
+      <div>
+        <TextField
+          label="Search by First Name"
+          value={searchValue}
+          onChange={(event) => setSearchValue(event.target.value)}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
       <Paper style={{ maxHeight: "500px", overflow: "auto" }}>
         <div>
-          {employees.map((employee) => (
+          {filteredEmployees.map((employee) => (
             <div key={employee.uuid}>
               <Checkbox
                 onChange={handleCheckboxChange(employee)}
