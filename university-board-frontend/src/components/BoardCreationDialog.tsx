@@ -44,6 +44,7 @@ function BoardCreationDialog({
     boardType: null,
     memberships: [],
     uuid: null,
+    comments: [],
   });
   const [loading, setLoading] = useState(false);
 
@@ -80,6 +81,7 @@ function BoardCreationDialog({
       boardType: null,
       memberships: [],
       uuid: null,
+      comments: [],
     });
   }, [open]);
 

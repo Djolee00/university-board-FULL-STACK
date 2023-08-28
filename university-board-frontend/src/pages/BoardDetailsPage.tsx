@@ -33,6 +33,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Membership } from "../models/Membership";
 import MembersStep from "../components/MemberStep";
 import { Employee } from "../models/Employee";
+import CommentsComponent from "../components/CommentsComponent";
 
 function BoardDetailsPage() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -587,9 +588,9 @@ function BoardDetailsPage() {
           onAdd={handleDisplayAddMember}
         />
       )}
-      {/* {selectedSection === "comments" && (
-        <Comments comments={board?.comments} />
-      )} */}
+      {selectedSection === "comments" && (
+        <CommentsComponent comments={board?.comments!} />
+      )}
       {/* {selectedSection === "files" && <Files files={board?.boardFiles} />} */}
 
       <ErrorPopup

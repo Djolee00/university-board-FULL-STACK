@@ -14,6 +14,7 @@ export interface Board {
   boardType: BoardType | null;
   uuid: string | null;
   memberships: Membership[] | null;
+  comments: Comment[] | null;
 }
 
 export enum BoardStatus {
@@ -21,6 +22,16 @@ export enum BoardStatus {
   ACTIVE = "Active",
   CLOSED = "Closed",
   EXPIRED = "Expired",
+}
+
+export interface Comment {
+  title: string;
+  description: string;
+  time: string; // ISO 8601 datetime string
+  uuid: string;
+  email: string;
+  firstName: string;
+  lastName: string;
 }
 
 export default BoardStatus;
