@@ -19,7 +19,7 @@ import {
   ToggleButtonGroup,
   ToggleButton,
 } from "@mui/material";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
 import ErrorPopup from "../components/ErrorPopup";
 import { getStoredToken } from "../utils/AuthUtils";
@@ -31,6 +31,8 @@ import MembersComponent from "../components/MembersComponent";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Membership } from "../models/Membership";
+import MembersStep from "../components/MemberStep";
+import { Employee } from "../models/Employee";
 
 function BoardDetailsPage() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -40,6 +42,7 @@ function BoardDetailsPage() {
   const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [successPopupOpen, setSuccessPopupOpen] = useState<boolean>(false);
+  const [displayAddMember, setDisplayAddMember] = useState<boolean>(false);
 
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -50,6 +53,8 @@ function BoardDetailsPage() {
   const [isTexFieldEmpty, setIsTextFieldEmpty] = useState<boolean>(true);
   const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
 
+  const [employees, setEmployees] = useState<Employee[]>([]);
+
   const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({
@@ -59,6 +64,14 @@ function BoardDetailsPage() {
   const [selectedSection, setSelectedSection] = useState("members");
 
   const navigate = useNavigate();
+
+  const employeeUUIDsInMemberships = board?.memberships!.map(
+    (member) => member.employee?.uuid
+  );
+
+  const employeesWithoutMembership = employees.filter(
+    (employee) => !employeeUUIDsInMemberships?.includes(employee.uuid)
+  );
 
   useEffect(() => {
     axios
@@ -81,6 +94,7 @@ function BoardDetailsPage() {
       });
 
     fetchBoardTypes();
+    fetchEmployees();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid]);
@@ -110,6 +124,24 @@ function BoardDetailsPage() {
         },
       })
       .then((response) => setBoardTypes(response.data))
+      .catch((error) => {
+        if (error.response) {
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Error fetching board types from server");
+        }
+        setErrorPopupOpen(true);
+      });
+  }
+
+  async function fetchEmployees() {
+    await axios
+      .get<BoardType[]>(`http://localhost:8080/api/v1/employees`, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
+      .then((response: AxiosResponse) => setEmployees(response.data.content))
       .catch((error) => {
         if (error.response) {
           setErrorMessage(error.response.data.detail);
@@ -310,6 +342,57 @@ function BoardDetailsPage() {
       });
   }
 
+  async function addNewMembership(member: Membership): Promise<void> {
+    await axios
+      .post(
+        `http://localhost:8080/api/v1/boards/${board!.uuid}/memberships`,
+        member,
+        {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccessMessage("Memberships successfully saved");
+        setSuccessPopupOpen(true);
+        member.uuid = response.data.identifier;
+        setBoard((prevBoard) => {
+          return {
+            ...prevBoard!,
+            memberships: [...prevBoard!.memberships!, member],
+          };
+        });
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data.detail);
+        } else {
+          setErrorMessage("Error occured while adding new membership.");
+        }
+        setErrorPopupOpen(true);
+      });
+  }
+
+  function handleMembershipsChange(memberships: Membership[]) {
+    setLoading(true);
+    addMembershipsInBulk(memberships).finally(() => setLoading(false));
+  }
+
+  async function addMembershipsInBulk(
+    memberships: Membership[]
+  ): Promise<void> {
+    await Promise.all(
+      memberships.map(async (m) => {
+        await addNewMembership(m);
+      })
+    );
+  }
+
+  const handleDisplayAddMember = () => {
+    setDisplayAddMember(!displayAddMember);
+  };
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -501,6 +584,7 @@ function BoardDetailsPage() {
           startDate={board?.startDate!}
           endDate={board?.endDate!}
           onSaveEdit={handleSaveEdit}
+          onAdd={handleDisplayAddMember}
         />
       )}
       {/* {selectedSection === "comments" && (
@@ -542,6 +626,28 @@ function BoardDetailsPage() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={displayAddMember}
+        fullWidth
+        style={{ padding: "20px" }}
+        onClose={handleDisplayAddMember}
+      >
+        <div style={{ padding: "20px" }}>
+          <MembersStep
+            employees={employeesWithoutMembership}
+            onNext={handleDisplayAddMember}
+            startDate={board?.startDate!}
+            endDate={board?.endDate!}
+            handleMemberships={handleMembershipsChange}
+            onCreate={() => {}}
+          />
+        </div>
+      </Dialog>
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
     </>
   );
 }
