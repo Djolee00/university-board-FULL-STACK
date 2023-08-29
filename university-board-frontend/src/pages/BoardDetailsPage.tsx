@@ -22,7 +22,7 @@ import {
 import axios, { AxiosResponse } from "axios";
 import BoardStatus, { Board, BoardType, Comment } from "../models/Board";
 import ErrorPopup from "../components/ErrorPopup";
-import { getStoredToken } from "../utils/AuthUtils";
+import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
 import SuccessPopup from "../components/SuccessPopup";
@@ -433,6 +433,41 @@ function BoardDetailsPage() {
       });
   }
 
+  function handleDeleteComment(comment: Comment) {
+    deleteComment(comment);
+  }
+
+  async function deleteComment(comment: Comment): Promise<void> {
+    await axios
+      .delete(`http://localhost:8080/api/v1/comments/${comment.uuid!}`, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
+      .then((response) => {
+        setSuccessMessage("Comment successfully deleted");
+        setSuccessPopupOpen(true);
+        setBoard((prevBoard) => {
+          const updatedComments = prevBoard!.comments!.filter(
+            (c) => c.uuid !== comment.uuid
+          );
+          return {
+            ...prevBoard!,
+            comments: updatedComments,
+          };
+        });
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data);
+        } else {
+          setErrorMessage("Error occured while deleting comment.");
+        }
+        console.log(error.response);
+        setErrorPopupOpen(true);
+      });
+  }
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -631,6 +666,11 @@ function BoardDetailsPage() {
         <CommentsComponent
           comments={board?.comments!}
           onAddComment={handleNewComment}
+          loggedUserEmail={
+            employees.find((e) => e.uuid === getStoredUUID())?.userProfile
+              ?.email!
+          }
+          onDeleteComment={handleDeleteComment}
         />
       )}
       {/* {selectedSection === "files" && <Files files={board?.boardFiles} />} */}

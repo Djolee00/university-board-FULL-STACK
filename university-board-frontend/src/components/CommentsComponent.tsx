@@ -1,17 +1,39 @@
 import React, { useState } from "react";
-import { Avatar, Grid, Paper, Button, TextField } from "@mui/material";
+import {
+  Avatar,
+  Grid,
+  Paper,
+  Button,
+  TextField,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Dialog,
+} from "@mui/material";
 import { Comment } from "../models/Board";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Props {
   comments: Comment[];
   onAddComment: (comment: Comment) => void;
+  loggedUserEmail: string;
+  onDeleteComment: (comment: Comment) => void;
 }
 
-const CommentsComponent = ({ comments, onAddComment }: Props) => {
+const CommentsComponent = ({
+  comments,
+  onAddComment,
+  loggedUserEmail,
+  onDeleteComment,
+}: Props) => {
   const [visibleComments, setVisibleComments] = useState(2);
   const [showAll, setShowAll] = useState(false);
   const defaultNumOfComments = 2;
   const [newComment, setNewComment] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const [deleteCommentUuid, setDeleteCommentUuid] = useState("");
 
   const handleShowMore = () => {
     setVisibleComments(comments.length);
@@ -38,6 +60,22 @@ const CommentsComponent = ({ comments, onAddComment }: Props) => {
       onAddComment(comment);
       setNewComment("");
     }
+  };
+
+  const handleDeleteComment = (uuid: string) => {
+    setDeleteCommentUuid(uuid);
+    setOpenDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setOpenDialog(false);
+    onDeleteComment(comments.find((c) => c.uuid === deleteCommentUuid)!);
+    setDeleteCommentUuid("");
+  };
+
+  const handleCancelDelete = () => {
+    setOpenDialog(false);
+    setDeleteCommentUuid("");
   };
 
   return (
@@ -100,6 +138,16 @@ const CommentsComponent = ({ comments, onAddComment }: Props) => {
                           minute: "2-digit",
                         })}
                       </p>
+                      {loggedUserEmail && comment.email === loggedUserEmail && (
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={() => handleDeleteComment(comment.uuid!)}
+                          style={{ marginTop: "10px" }}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      )}
                     </Grid>
                   </Grid>
                 </Paper>
@@ -144,7 +192,6 @@ const CommentsComponent = ({ comments, onAddComment }: Props) => {
             value={newComment}
           />
           <Button
-            //   onClick={handleAddComment}
             variant="contained"
             color="primary"
             style={{ marginTop: "10px" }}
@@ -155,6 +202,36 @@ const CommentsComponent = ({ comments, onAddComment }: Props) => {
           </Button>
         </Paper>
       </div>
+      <Dialog
+        open={openDialog}
+        // onClose={handleCancelDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this comment?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCancelDelete}
+            color="primary"
+            variant="outlined"
+          >
+            No
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="outlined"
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
