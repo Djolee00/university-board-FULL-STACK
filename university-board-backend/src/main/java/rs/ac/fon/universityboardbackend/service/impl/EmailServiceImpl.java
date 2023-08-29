@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -23,6 +24,7 @@ public class EmailServiceImpl implements EmailService {
     private final TemplateEngine templateEngine;
     private final TemplateProperties templateProperties;
 
+    @Async
     @Override
     public void sendApplicationWelcomeMail(UserProfile userProfile, String generatedPassword)
             throws MessagingException {
@@ -47,6 +49,7 @@ public class EmailServiceImpl implements EmailService {
         javaMailSender.send(message);
     }
 
+    @Async
     @Override
     public void sendBoardWelcomeMail(UserProfile userProfile, Board board)
             throws MessagingException {
@@ -71,6 +74,7 @@ public class EmailServiceImpl implements EmailService {
         javaMailSender.send(message);
     }
 
+    @Async
     @Override
     public void sendNewCommentMail(UserProfile userProfile, Comment comment)
             throws MessagingException {
@@ -95,6 +99,7 @@ public class EmailServiceImpl implements EmailService {
         javaMailSender.send(message);
     }
 
+    @Async
     @Override
     public void sendBoardBeginningEmail(UserProfile userProfile, Board board)
             throws MessagingException {
@@ -119,6 +124,7 @@ public class EmailServiceImpl implements EmailService {
         javaMailSender.send(message);
     }
 
+    @Async
     @Override
     public void sendCommencementEmail(UserProfile userProfile, Board board)
             throws MessagingException {

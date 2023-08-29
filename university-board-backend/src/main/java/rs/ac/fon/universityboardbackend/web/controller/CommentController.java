@@ -38,7 +38,7 @@ public class CommentController extends AbstractController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/{boardUuid}/comments")
+    @PostMapping("boards/{boardUuid}/comments")
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable UUID boardUuid, @RequestBody @Valid CommentBaseDto commentBaseDto) {
         hasPrivilegeOrThrow(PrivilegeCode.COMMENT_W);
