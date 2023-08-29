@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rs.ac.bg.fon.fileservice.exceptions.FileDeletionException;
 import rs.ac.bg.fon.fileservice.exceptions.FileDownloadException;
-import rs.ac.bg.fon.fileservice.exceptions.FileEmptyException;
 import rs.ac.bg.fon.fileservice.exceptions.FileUploadException;
 import rs.ac.bg.fon.fileservice.service.FileService;
 import rs.ac.bg.fon.fileservice.web.dto.APIResponse;
@@ -37,16 +36,14 @@ public class FileController {
             @RequestParam("file") MultipartFile multipartFile,
             @RequestParam("folderUuid") UUID folderUuid,
             @RequestParam(value = "fileUuid", required = false) UUID fileUuid)
-            throws FileEmptyException, FileUploadException, IOException {
-        if (multipartFile.isEmpty()) {
-            throw new FileEmptyException("File is empty. Cannot save an empty file");
-        }
+            throws FileUploadException, IOException {
+
         boolean isValidFile = isValidFile(multipartFile);
         List<String> allowedFileExtensions =
                 new ArrayList<>(
                         Arrays.asList(
                                 "pdf", "txt", "epub", "csv", "png", "jpg", "jpeg", "srt", "xlsx",
-                                "docx", ".rar", ".zip", ".pptx"));
+                                "docx", "rar", "zip", "pptx"));
 
         if (isValidFile
                 && allowedFileExtensions.contains(
@@ -106,14 +103,18 @@ public class FileController {
     public ResponseEntity<?> delete(
             @RequestParam(value = "folderUuid") @NotNull UUID folderUuid,
             @RequestParam(value = "fileUuid") @NotNull UUID fileUuid,
-            @RequestParam(value = "fileName", required = false) String fileName )
+            @RequestParam(value = "fileName", required = false) String fileName)
             throws FileDeletionException {
-        if(fileName != null){
+        if (fileName != null) {
             fileService.deleteFileLocally(fileName);
         }
         fileService.deleteFile(folderUuid, fileUuid);
         APIResponse apiResponse =
-                APIResponse.builder().message("File deleted!").isSuccessful(true).statusCode(200).build();
+                APIResponse.builder()
+                        .message("File deleted!")
+                        .isSuccessful(true)
+                        .statusCode(200)
+                        .build();
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -122,11 +123,19 @@ public class FileController {
         boolean isDeleted = fileService.deleteFileLocally(fileName);
         if (isDeleted) {
             APIResponse apiResponse =
-                    APIResponse.builder().isSuccessful(true).message("file deleted!").statusCode(200).build();
+                    APIResponse.builder()
+                            .isSuccessful(true)
+                            .message("file deleted!")
+                            .statusCode(200)
+                            .build();
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } else {
             APIResponse apiResponse =
-                    APIResponse.builder().isSuccessful(false).message("file does not exist").statusCode(404).build();
+                    APIResponse.builder()
+                            .isSuccessful(false)
+                            .message("file does not exist")
+                            .statusCode(404)
+                            .build();
             return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
     }
