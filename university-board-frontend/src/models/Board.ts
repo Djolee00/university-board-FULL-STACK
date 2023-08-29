@@ -15,6 +15,7 @@ export interface Board {
   uuid: string | null;
   memberships: Membership[] | null;
   comments: Comment[] | null;
+  boardFiles: BoardFile[] | null;
 }
 
 export enum BoardStatus {
@@ -32,6 +33,12 @@ export interface Comment {
   email: string | null;
   firstName: string | null;
   lastName: string | null;
+}
+
+export interface BoardFile {
+  uuid: string | null;
+  originalName: string | null;
+  type: string | null;
 }
 
 export default BoardStatus;

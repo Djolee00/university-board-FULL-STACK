@@ -20,7 +20,12 @@ import {
   ToggleButton,
 } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
-import BoardStatus, { Board, BoardType, Comment } from "../models/Board";
+import BoardStatus, {
+  Board,
+  BoardFile,
+  BoardType,
+  Comment,
+} from "../models/Board";
 import ErrorPopup from "../components/ErrorPopup";
 import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
 import Navbar from "../components/NavBar";
@@ -34,6 +39,7 @@ import { Membership } from "../models/Membership";
 import MembersStep from "../components/MemberStep";
 import { Employee } from "../models/Employee";
 import CommentsComponent from "../components/CommentsComponent";
+import FilesComponent from "../components/FilesComponent";
 
 function BoardDetailsPage() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -468,6 +474,37 @@ function BoardDetailsPage() {
       });
   }
 
+  async function downloadFile(file: BoardFile) {
+    axios({
+      method: "get",
+      url: `http://localhost:8080/api/v1/files/${file.uuid!}`,
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${getStoredToken()}`,
+      },
+    })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${file.originalName}`); // You can set the desired file name here
+        document.body.appendChild(link);
+        link.click();
+
+        setSuccessMessage("File successfully downloaded");
+        setSuccessPopupOpen(true);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data);
+        } else {
+          setErrorMessage("Error occured while downloading file.");
+        }
+        setErrorPopupOpen(true);
+      });
+  }
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -673,7 +710,12 @@ function BoardDetailsPage() {
           onDeleteComment={handleDeleteComment}
         />
       )}
-      {/* {selectedSection === "files" && <Files files={board?.boardFiles} />} */}
+      {selectedSection === "files" && (
+        <FilesComponent
+          boardFiles={board?.boardFiles!}
+          handleDownload={downloadFile}
+        />
+      )}
 
       <ErrorPopup
         open={errorPopupOpen}

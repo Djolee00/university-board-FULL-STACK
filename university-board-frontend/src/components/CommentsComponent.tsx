@@ -98,7 +98,7 @@ const CommentsComponent = ({
             margin: "25px",
             backgroundColor: "#f9f9f9",
             flex: "1",
-            minHeight: "373px",
+            minHeight: "463px",
           }}
         >
           {comments.length !== 0 ? (
@@ -177,7 +177,7 @@ const CommentsComponent = ({
             margin: "25px",
             backgroundColor: "#f9f9f9",
             flex: "1",
-            maxHeight: "373px",
+            maxHeight: "463px",
           }}
         >
           <h3>Add a New Comment</h3>

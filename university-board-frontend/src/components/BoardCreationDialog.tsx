@@ -45,6 +45,7 @@ function BoardCreationDialog({
     memberships: [],
     uuid: null,
     comments: [],
+    boardFiles: [],
   });
   const [loading, setLoading] = useState(false);
 
@@ -82,6 +83,7 @@ function BoardCreationDialog({
       memberships: [],
       uuid: null,
       comments: [],
+      boardFiles: [],
     });
   }, [open]);
 

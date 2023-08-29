@@ -96,3 +96,4 @@ university-board-frontend/.env.production.local
 university-board-frontend/npm-debug.log*
 university-board-frontend/yarn-debug.log*
 university-board-frontend/yarn-error.log*
+university-board-frontend/src/icons
