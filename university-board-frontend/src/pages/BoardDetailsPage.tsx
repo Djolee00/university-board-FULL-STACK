@@ -20,7 +20,7 @@ import {
   ToggleButton,
 } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
-import BoardStatus, { Board, BoardType } from "../models/Board";
+import BoardStatus, { Board, BoardType, Comment } from "../models/Board";
 import ErrorPopup from "../components/ErrorPopup";
 import { getStoredToken } from "../utils/AuthUtils";
 import Navbar from "../components/NavBar";
@@ -367,7 +367,7 @@ function BoardDetailsPage() {
       })
       .catch((error) => {
         if (axios.isAxiosError(error)) {
-          setErrorMessage(error.response?.data.detail);
+          setErrorMessage(error.response?.data.errors);
         } else {
           setErrorMessage("Error occured while adding new membership.");
         }
@@ -393,6 +393,45 @@ function BoardDetailsPage() {
   const handleDisplayAddMember = () => {
     setDisplayAddMember(!displayAddMember);
   };
+
+  function handleNewComment(comment: Comment) {
+    setLoading(true);
+    addNewComment({ description: comment.description }).finally(() =>
+      setLoading(false)
+    );
+  }
+
+  async function addNewComment(comment: any): Promise<void> {
+    await axios
+      .post<Comment>(
+        `http://localhost:8080/api/v1/boards/${board!.uuid}/comments`,
+        comment,
+        {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccessMessage("Comment successfully saved");
+        setSuccessPopupOpen(true);
+        setBoard((prevBoard) => {
+          return {
+            ...prevBoard!,
+            comments: [...prevBoard!.comments!, response.data],
+          };
+        });
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data);
+        } else {
+          setErrorMessage("Error occured while adding new comment.");
+        }
+        console.log(error.response);
+        setErrorPopupOpen(true);
+      });
+  }
 
   return (
     <>
@@ -589,7 +628,10 @@ function BoardDetailsPage() {
         />
       )}
       {selectedSection === "comments" && (
-        <CommentsComponent comments={board?.comments!} />
+        <CommentsComponent
+          comments={board?.comments!}
+          onAddComment={handleNewComment}
+        />
       )}
       {/* {selectedSection === "files" && <Files files={board?.boardFiles} />} */}
 

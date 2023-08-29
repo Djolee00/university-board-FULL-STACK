@@ -25,13 +25,13 @@ export enum BoardStatus {
 }
 
 export interface Comment {
-  title: string;
-  description: string;
-  time: string; // ISO 8601 datetime string
-  uuid: string;
-  email: string;
-  firstName: string;
-  lastName: string;
+  title: string | null;
+  description: string | null;
+  time: string | null; // ISO 8601 datetime string
+  uuid: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
 }
 
 export default BoardStatus;
