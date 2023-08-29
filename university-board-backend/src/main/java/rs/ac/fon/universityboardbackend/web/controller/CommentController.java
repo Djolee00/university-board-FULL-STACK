@@ -18,7 +18,6 @@ import rs.ac.fon.universityboardbackend.service.CommentService;
 import rs.ac.fon.universityboardbackend.service.UserProfileService;
 import rs.ac.fon.universityboardbackend.web.dto.base.CommentBaseDto;
 import rs.ac.fon.universityboardbackend.web.dto.response.CommentResponseDto;
-import rs.ac.fon.universityboardbackend.web.dto.response.CreatedResponseDto;
 
 @RestController
 public class CommentController extends AbstractController {
@@ -40,7 +39,7 @@ public class CommentController extends AbstractController {
     }
 
     @PostMapping("/{boardUuid}/comments")
-    public ResponseEntity<CreatedResponseDto<UUID>> createComment(
+    public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable UUID boardUuid, @RequestBody @Valid CommentBaseDto commentBaseDto) {
         hasPrivilegeOrThrow(PrivilegeCode.COMMENT_W);
         Board board = boardService.findByUuid(boardUuid);
@@ -51,7 +50,7 @@ public class CommentController extends AbstractController {
 
         commentService.saveOrUpdate(comment);
         return new ResponseEntity<>(
-                new CreatedResponseDto<>(comment.getUuid()), HttpStatus.CREATED);
+                commentMapper.commentToCommentResponseDto(comment), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/comments/{uuid}")
