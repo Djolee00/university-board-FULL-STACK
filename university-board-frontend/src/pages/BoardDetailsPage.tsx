@@ -505,6 +505,10 @@ function BoardDetailsPage() {
       });
   }
 
+  function handleUploadedFile(file: BoardFile): void {
+    board?.boardFiles?.push(file);
+  }
+
   return (
     <>
       <Navbar onMenuToggle={toggleSideMenu} />
@@ -714,6 +718,8 @@ function BoardDetailsPage() {
         <FilesComponent
           boardFiles={board?.boardFiles!}
           handleDownload={downloadFile}
+          board={board!}
+          onUpload={handleUploadedFile}
         />
       )}
 
