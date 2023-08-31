@@ -434,7 +434,6 @@ function BoardDetailsPage() {
         } else {
           setErrorMessage("Error occured while adding new comment.");
         }
-        console.log(error.response);
         setErrorPopupOpen(true);
       });
   }
@@ -469,7 +468,6 @@ function BoardDetailsPage() {
         } else {
           setErrorMessage("Error occured while deleting comment.");
         }
-        console.log(error.response);
         setErrorPopupOpen(true);
       });
   }
@@ -495,7 +493,6 @@ function BoardDetailsPage() {
         setSuccessPopupOpen(true);
       })
       .catch((error) => {
-        console.log(error.response.data);
         if (axios.isAxiosError(error)) {
           setErrorMessage(error.response?.data);
         } else {
@@ -505,8 +502,43 @@ function BoardDetailsPage() {
       });
   }
 
-  function handleUploadedFile(file: BoardFile): void {
+  function handleUploadedFile(file: BoardFile) {
     board?.boardFiles?.push(file);
+  }
+
+  function handleDeleteFile(file: BoardFile) {
+    setLoading(true);
+    deleteFile(file).finally(() => setLoading(false));
+  }
+
+  async function deleteFile(file: BoardFile) {
+    await axios
+      .delete(`http://localhost:8080/api/v1/files/${file.uuid!}`, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
+      .then((response) => {
+        setSuccessMessage("File successfully deleted");
+        setSuccessPopupOpen(true);
+        setBoard((prevBoard) => {
+          const updatedBoardFile = prevBoard!.boardFiles!.filter(
+            (bf) => bf.uuid !== file.uuid
+          );
+          return {
+            ...prevBoard!,
+            boardFiles: updatedBoardFile,
+          };
+        });
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data);
+        } else {
+          setErrorMessage("Error occured while deleting file");
+        }
+        setErrorPopupOpen(true);
+      });
   }
 
   return (
@@ -720,6 +752,7 @@ function BoardDetailsPage() {
           handleDownload={downloadFile}
           board={board!}
           onUpload={handleUploadedFile}
+          onDelete={handleDeleteFile}
         />
       )}
 

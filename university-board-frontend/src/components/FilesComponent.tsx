@@ -8,6 +8,11 @@ import {
   Box,
   IconButton,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { Board, BoardFile } from "../models/Board";
 
@@ -32,6 +37,7 @@ interface Props {
   handleDownload: (file: BoardFile) => void;
   board: Board;
   onUpload: (file: BoardFile) => void;
+  onDelete: (file: BoardFile) => void;
 }
 
 const FilesComponent = ({
@@ -39,6 +45,7 @@ const FilesComponent = ({
   handleDownload,
   board,
   onUpload,
+  onDelete,
 }: Props) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -49,7 +56,22 @@ const FilesComponent = ({
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [successPopupOpen, setSuccessPopupOpen] = useState<boolean>(false);
 
+  const [deleteFile, setDeleteFile] = useState<BoardFile | null>(null);
+
   const [loading, setLoading] = useState(false);
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleCancelDelete = () => {
+    setOpenDialog(false);
+    setDeleteFile(null);
+  };
+
+  const handleConfirmDelete = () => {
+    setOpenDialog(false);
+    onDelete(deleteFile!);
+    setDeleteFile(null);
+  };
 
   const closeErrorPopup = () => {
     setErrorPopupOpen(false);
@@ -208,7 +230,6 @@ const FilesComponent = ({
         onUpload(response.data);
       })
       .catch((error) => {
-        console.log("GRESKA");
         if (axios.isAxiosError(error)) {
           setErrorMessage(error.response?.data.details);
         } else {
@@ -216,6 +237,11 @@ const FilesComponent = ({
         }
         setErrorPopupOpen(true);
       });
+  }
+
+  function handleDeleteFile(boardFile: BoardFile) {
+    setDeleteFile(boardFile);
+    setOpenDialog(true);
   }
 
   return (
@@ -258,8 +284,20 @@ const FilesComponent = ({
                       alignItems: "center",
                       backgroundColor: "#EAF1FC",
                       minHeight: "100px",
+                      position: "relative",
                     }}
                   >
+                    <IconButton
+                      style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                      }}
+                      color="error"
+                      onClick={() => handleDeleteFile(boardFile)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
                     <div
                       style={{
                         margin: "15px",
@@ -394,7 +432,7 @@ const FilesComponent = ({
                   >
                     <Typography>{file.name}</Typography>
                     <IconButton
-                      color="secondary"
+                      color="error"
                       onClick={() => handleCancelFile(file)}
                     >
                       <CancelIcon />
@@ -414,6 +452,35 @@ const FilesComponent = ({
           </div>
         </Paper>
       </div>
+      <Dialog
+        open={openDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this file?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCancelDelete}
+            color="primary"
+            variant="outlined"
+          >
+            No
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="outlined"
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       <ErrorPopup
         open={errorPopupOpen}
         message={errorMessage}

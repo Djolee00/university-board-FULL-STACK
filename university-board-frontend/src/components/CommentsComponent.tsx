@@ -204,7 +204,6 @@ const CommentsComponent = ({
       </div>
       <Dialog
         open={openDialog}
-        // onClose={handleCancelDelete}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
