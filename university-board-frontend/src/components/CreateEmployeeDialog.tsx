@@ -65,6 +65,7 @@ function CreateEmployeeDialog({
     const privilegesNotInRole = allPrivileges.filter(
       (privilege) => !selectedPrivilegeCodes.includes(privilege.code)
     );
+    setSelectedPrivileges([]);
     setAvailablePrivileges(privilegesNotInRole);
   };
 
