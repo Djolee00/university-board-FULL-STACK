@@ -1,0 +1,19 @@
+.drag-drop-box {
+  background: #f7f7f7;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  text-align: center;
+  animation: jump 1s infinite;
+  font-size: 40px;
+}
+
+@keyframes jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}

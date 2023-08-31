@@ -25,6 +25,7 @@ import ErrorPopup from "./ErrorPopup";
 import SuccessPopup from "./SuccessPopup";
 import axios from "axios";
 import { getStoredToken } from "../utils/AuthUtils";
+import "../styles/FileComponentStyle.css";
 
 interface Props {
   boardFiles: BoardFile[];
@@ -157,6 +158,11 @@ const FilesComponent = ({
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragActive(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragActive(false);
   };
 
   const handleCancelFile = (file: File) => {
@@ -294,12 +300,14 @@ const FilesComponent = ({
             border: "1px solid #ddd",
             borderRadius: "5px",
             margin: "25px",
-            backgroundColor: isDragActive ? "#f0f8ff" : "#f9f9f9",
+            backgroundColor: "#f9f9f9",
             flex: "1",
             maxHeight: "463px",
+            overflow: "auto",
           }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
         >
           <div
             style={{
@@ -308,16 +316,44 @@ const FilesComponent = ({
               alignItems: "center",
             }}
           >
-            <p
+            <div
               style={{
-                textAlign: "left",
-                color: "gray",
+                background: "#f7f7f7",
+                padding: "20px",
+                border: "2px dashed #ccc",
+                borderRadius: "10px",
+                minWidth: "500px",
+                backgroundColor: isDragActive ? "#f0f8ff" : "#f9f9f9",
               }}
             >
-              Drag and Drop
-            </p>
-            <p style={{ textAlign: "left", color: "gray", marginTop: "3px" }}>
-              Or
+              <h2
+                style={{ fontSize: "24px", textAlign: "center", color: "#555" }}
+              >
+                Drag and drop files
+              </h2>
+              <p
+                style={{ fontSize: "18px", textAlign: "center", color: "#777" }}
+              >
+                Here
+              </p>
+              <Box
+                className="drag-drop-box"
+                style={{
+                  backgroundColor: isDragActive ? "#f0f8ff" : "#f9f9f9",
+                }}
+              >
+                🚀
+              </Box>
+            </div>
+            <p
+              style={{
+                fontSize: "16px",
+                textAlign: "center",
+                color: "#aaa",
+                marginTop: "20px",
+              }}
+            >
+              ...or choose this option
             </p>
             <label htmlFor="file-upload">
               <input
@@ -328,7 +364,7 @@ const FilesComponent = ({
                 multiple
               />
               <Button
-                style={{ marginTop: "20px" }}
+                style={{ marginTop: "10px" }}
                 variant="contained"
                 color="primary"
                 component="span"
