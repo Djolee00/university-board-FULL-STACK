@@ -85,6 +85,11 @@ function BoardDetailsPage() {
   );
 
   useEffect(() => {
+    const hasAccess = getStoredPrivileges()?.includes("BOARD_R");
+
+    if (!hasAccess) {
+      return navigate("/myprofile");
+    }
     axios
       .get<Board>(`http://localhost:8080/api/v1/boards/${uuid}`, {
         headers: {

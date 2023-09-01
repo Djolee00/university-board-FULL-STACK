@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { clearStorage, getStoredToken } from "../utils/AuthUtils";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  clearStorage,
+  getStoredPrivileges,
+  getStoredToken,
+} from "../utils/AuthUtils";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,6 +13,8 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = (props) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
+
   const checkUserToken = () => {
     const userToken = getStoredToken();
     if (!userToken || userToken === "undefined") {
@@ -28,6 +34,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = (props) => {
   };
   useEffect(() => {
     checkUserToken();
+
+    if (
+      (location.pathname === "/boards" || location.pathname === "/boards/") &&
+      !getStoredPrivileges()?.includes("BOARD_R")
+    ) {
+      navigate("/myprofile"); // Redirect to UserProfilePage
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <React.Fragment>{isLoggedIn ? props.children : null}</React.Fragment>;
