@@ -12,16 +12,16 @@ public class EmailBuilder {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
+    private final Context context;
 
     private String to;
     private String subject;
     private String templateName;
-    private String contextVariableName;
-    private Object contextVariable;
 
     public EmailBuilder(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
         this.templateEngine = templateEngine;
+        this.context = new Context();
     }
 
     public EmailBuilder to(String to) {
@@ -40,15 +40,11 @@ public class EmailBuilder {
     }
 
     public EmailBuilder contextVariable(String name, Object value) {
-        this.contextVariableName = name;
-        this.contextVariable = value;
+        context.setVariable(name, value);
         return this;
     }
 
     public void send() throws MessagingException {
-        Context context = new Context();
-        context.setVariable(contextVariableName, contextVariable);
-
         String emailContent = templateEngine.process(templateName, context);
 
         MimeMessage message = javaMailSender.createMimeMessage();

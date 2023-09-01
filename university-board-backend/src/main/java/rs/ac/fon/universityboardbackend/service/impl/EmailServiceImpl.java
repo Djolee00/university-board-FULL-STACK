@@ -25,7 +25,6 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendApplicationWelcomeMail(UserProfile userProfile, String generatedPassword)
             throws MessagingException {
-
         new EmailBuilder(javaMailSender, templateEngine)
                 .to(userProfile.getEmail())
                 .subject("Welcome to University Board Application")
