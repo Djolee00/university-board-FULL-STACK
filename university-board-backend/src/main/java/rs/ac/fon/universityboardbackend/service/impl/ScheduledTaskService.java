@@ -20,7 +20,7 @@ public class ScheduledTaskService {
     private final BoardService boardService;
     private final EmailService emailService;
 
-    @Scheduled(cron = "0 17 * * *", zone = "UTC")
+    @Scheduled(cron = "0 0 17 * * *", zone = "UTC")
     @Transactional(readOnly = true)
     public void sendBoardBeginningNotification() {
         List<Board> boards = boardService.findAll(new BoardSearch());
@@ -45,7 +45,7 @@ public class ScheduledTaskService {
                                                 }));
     }
 
-    @Scheduled(cron = "0 18 * * *", zone = "UTC")
+    @Scheduled(cron = "0 0 18 * * *", zone = "UTC")
     @Transactional(readOnly = true)
     public void sendCommencementNotification() {
         List<Board> boards = boardService.findAll(new BoardSearch());
