@@ -1,15 +1,12 @@
 package rs.ac.fon.universityboardbackend.service.impl;
 
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+import rs.ac.fon.universityboardbackend.builder.EmailBuilder;
 import rs.ac.fon.universityboardbackend.model.board.Board;
 import rs.ac.fon.universityboardbackend.model.board.Comment;
 import rs.ac.fon.universityboardbackend.model.user.UserProfile;
@@ -28,124 +25,65 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendApplicationWelcomeMail(UserProfile userProfile, String generatedPassword)
             throws MessagingException {
-        Context context = new Context();
-        context.setVariable("user", userProfile);
-        context.setVariable("generatedPassword", generatedPassword);
 
-        String emailContent =
-                templateEngine.process(templateProperties.getWelcomeTemplateName(), context);
-
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper =
-                new MimeMessageHelper(
-                        message,
-                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                        StandardCharsets.UTF_8.name());
-
-        helper.setTo(userProfile.getEmail());
-        helper.setSubject("Welcome to University Board Application");
-        helper.setText(emailContent, true);
-
-        javaMailSender.send(message);
+        new EmailBuilder(javaMailSender, templateEngine)
+                .to(userProfile.getEmail())
+                .subject("Welcome to University Board Application")
+                .templateName(templateProperties.getWelcomeTemplateName())
+                .contextVariable("user", userProfile)
+                .contextVariable("generatedPassword", generatedPassword)
+                .send();
     }
 
     @Async
     @Override
     public void sendBoardWelcomeMail(UserProfile userProfile, Board board)
             throws MessagingException {
-        Context context = new Context();
-        context.setVariable("board", board);
-        context.setVariable("user", userProfile);
-
-        String emailContent =
-                templateEngine.process(templateProperties.getBoardWelcomeTemplateName(), context);
-
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper =
-                new MimeMessageHelper(
-                        message,
-                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                        StandardCharsets.UTF_8.name());
-
-        helper.setTo(userProfile.getEmail());
-        helper.setSubject("You have been added to new Board");
-        helper.setText(emailContent, true);
-
-        javaMailSender.send(message);
+        new EmailBuilder(javaMailSender, templateEngine)
+                .to(userProfile.getEmail())
+                .subject("You have been added to a new Board")
+                .templateName(templateProperties.getBoardWelcomeTemplateName())
+                .contextVariable("board", board)
+                .contextVariable("user", userProfile)
+                .send();
     }
 
     @Async
     @Override
     public void sendNewCommentMail(UserProfile userProfile, Comment comment)
             throws MessagingException {
-        Context context = new Context();
-        context.setVariable("comment", comment);
-        context.setVariable("user", userProfile);
-
-        String emailContent =
-                templateEngine.process(templateProperties.getNewCommentTemplateName(), context);
-
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper =
-                new MimeMessageHelper(
-                        message,
-                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                        StandardCharsets.UTF_8.name());
-
-        helper.setTo(userProfile.getEmail());
-        helper.setSubject("You have new comment in Board");
-        helper.setText(emailContent, true);
-
-        javaMailSender.send(message);
+        new EmailBuilder(javaMailSender, templateEngine)
+                .to(userProfile.getEmail())
+                .subject("You have a new comment in a Board")
+                .templateName(templateProperties.getNewCommentTemplateName())
+                .contextVariable("comment", comment)
+                .contextVariable("user", userProfile)
+                .send();
     }
 
     @Async
     @Override
     public void sendBoardBeginningEmail(UserProfile userProfile, Board board)
             throws MessagingException {
-        Context context = new Context();
-        context.setVariable("board", board);
-        context.setVariable("user", userProfile);
-
-        String emailContent =
-                templateEngine.process(templateProperties.getBoardBeginningTemplateName(), context);
-
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper =
-                new MimeMessageHelper(
-                        message,
-                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                        StandardCharsets.UTF_8.name());
-
-        helper.setTo(userProfile.getEmail());
-        helper.setSubject("Board is about to start");
-        helper.setText(emailContent, true);
-
-        javaMailSender.send(message);
+        new EmailBuilder(javaMailSender, templateEngine)
+                .to(userProfile.getEmail())
+                .subject("Your duties in a Board are about to start")
+                .templateName(templateProperties.getBoardBeginningTemplateName())
+                .contextVariable("board", board)
+                .contextVariable("user", userProfile)
+                .send();
     }
 
     @Async
     @Override
     public void sendCommencementEmail(UserProfile userProfile, Board board)
             throws MessagingException {
-        Context context = new Context();
-        context.setVariable("board", board);
-        context.setVariable("user", userProfile);
-
-        String emailContent =
-                templateEngine.process(templateProperties.getBoardBeginningTemplateName(), context);
-
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper =
-                new MimeMessageHelper(
-                        message,
-                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                        StandardCharsets.UTF_8.name());
-
-        helper.setTo(userProfile.getEmail());
-        helper.setSubject("Your duties in Board are about to start");
-        helper.setText(emailContent, true);
-
-        javaMailSender.send(message);
+        new EmailBuilder(javaMailSender, templateEngine)
+                .to(userProfile.getEmail())
+                .subject("Your duties in a Board are about to start")
+                .templateName(templateProperties.getBoardBeginningTemplateName())
+                .contextVariable("board", board)
+                .contextVariable("user", userProfile)
+                .send();
     }
 }
