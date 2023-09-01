@@ -24,6 +24,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddIcon from "@mui/icons-material/Add";
+import { getStoredPrivileges, getStoredUUID } from "../utils/AuthUtils";
 
 interface Props {
   members: Membership[];
@@ -123,7 +124,16 @@ function MembersComponent({
             zIndex: 1,
           }}
         >
-          <Fab color="success" aria-label="add" onClick={() => onAdd()}>
+          <Fab
+            color="success"
+            aria-label="add"
+            onClick={() => onAdd()}
+            disabled={
+              !getStoredPrivileges()?.includes("BOARD_W") ||
+              members?.filter((m) => m.employee?.uuid === getStoredUUID())
+                .length === 0
+            }
+          >
             <AddIcon />
           </Fab>
         </Tooltip>
@@ -229,12 +239,24 @@ function MembersComponent({
                         <IconButton
                           onClick={() => handleEdit(member.uuid!)}
                           aria-label="edit"
+                          disabled={
+                            !getStoredPrivileges()?.includes("BOARD_W") ||
+                            members?.filter(
+                              (m) => m.employee?.uuid === getStoredUUID()
+                            ).length === 0
+                          }
                         >
                           <EditIcon color="primary" />
                         </IconButton>
                         <IconButton
                           onClick={() => handleDeleteConfirmationOpen(member)}
                           aria-label="delete"
+                          disabled={
+                            !getStoredPrivileges()?.includes("BOARD_W") ||
+                            members?.filter(
+                              (m) => m.employee?.uuid === getStoredUUID()
+                            ).length === 0
+                          }
                         >
                           <DeleteForeverIcon color="error" />
                         </IconButton>

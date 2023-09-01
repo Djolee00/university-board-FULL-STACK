@@ -17,6 +17,7 @@ import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
 import {
   clearStorage,
+  getStoredPrivileges,
   getStoredToken,
   getStoredUUID,
 } from "../utils/AuthUtils";
@@ -322,6 +323,7 @@ const EmployeesPage = () => {
                 aria-label="add"
                 variant="extended"
                 onClick={() => setCreateDialogOpen(true)}
+                disabled={!getStoredPrivileges()?.includes("ACCOUNT_C")}
               >
                 <PersonAddAltIcon sx={{ mr: 1 }} />
                 New
@@ -364,6 +366,9 @@ const EmployeesPage = () => {
                       <TableCell>
                         <IconButton
                           onClick={() => handleOpenDeleteDialog(employee)}
+                          disabled={
+                            !getStoredPrivileges()?.includes("ACCOUNT_D")
+                          }
                         >
                           <DeleteForeverIcon color="error" />
                         </IconButton>

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { Comment } from "../models/Board";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { getStoredPrivileges } from "../utils/AuthUtils";
 
 interface Props {
   comments: Comment[];
@@ -190,12 +191,16 @@ const CommentsComponent = ({
             margin="dense"
             style={{ backgroundColor: "#ffffff" }}
             value={newComment}
+            disabled={!getStoredPrivileges()?.includes("COMMENT_W")}
           />
           <Button
             variant="contained"
             color="primary"
             style={{ marginTop: "10px" }}
-            disabled={newComment.trim() === ""}
+            disabled={
+              newComment.trim() === "" ||
+              !getStoredPrivileges()?.includes("COMMENT_W")
+            }
             onClick={handleAddComment}
           >
             Add Comment

@@ -29,7 +29,11 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ErrorPopup from "./ErrorPopup";
 import SuccessPopup from "./SuccessPopup";
 import axios from "axios";
-import { getStoredToken } from "../utils/AuthUtils";
+import {
+  getStoredPrivileges,
+  getStoredToken,
+  getStoredUUID,
+} from "../utils/AuthUtils";
 import "../styles/FileComponentStyle.css";
 
 interface Props {
@@ -295,6 +299,12 @@ const FilesComponent = ({
                       }}
                       color="error"
                       onClick={() => handleDeleteFile(boardFile)}
+                      disabled={
+                        !getStoredPrivileges()?.includes("FILE_D") ||
+                        board.memberships?.filter(
+                          (m) => m.employee?.uuid === getStoredUUID()
+                        ).length === 0
+                      }
                     >
                       <CancelIcon />
                     </IconButton>
@@ -407,6 +417,12 @@ const FilesComponent = ({
                 color="primary"
                 component="span"
                 startIcon={<CloudUploadIcon />}
+                disabled={
+                  !getStoredPrivileges()?.includes("FILE_UP") ||
+                  board.memberships?.filter(
+                    (m) => m.employee?.uuid === getStoredUUID()
+                  ).length === 0
+                }
               >
                 Upload
               </Button>
@@ -444,6 +460,12 @@ const FilesComponent = ({
                   color="primary"
                   style={{ marginTop: "10px" }}
                   onClick={handleSave}
+                  disabled={
+                    !getStoredPrivileges()?.includes("FILE_UP") ||
+                    board.memberships?.filter(
+                      (m) => m.employee?.uuid === getStoredUUID()
+                    ).length === 0
+                  }
                 >
                   Save
                 </Button>

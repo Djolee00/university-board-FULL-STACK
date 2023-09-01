@@ -14,7 +14,11 @@ import axios from "axios";
 import BoardStatus, { Board, BoardType } from "../models/Board";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
-import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
+import {
+  getStoredPrivileges,
+  getStoredToken,
+  getStoredUUID,
+} from "../utils/AuthUtils";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
@@ -317,6 +321,7 @@ function BoardsPage() {
               aria-label="add"
               variant="extended"
               onClick={() => setCreateDialogOpen(true)}
+              disabled={!getStoredPrivileges()?.includes("BOARD_C")}
             >
               <NoteAddIcon sx={{ mr: 1 }} />
               New

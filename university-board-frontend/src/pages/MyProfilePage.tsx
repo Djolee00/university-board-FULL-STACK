@@ -19,7 +19,11 @@ import SuccessPopup from "../components/SuccessPopup";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
 import { AcademicTitle } from "../models/AcademicTitleEnum";
-import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
+import {
+  getStoredPrivileges,
+  getStoredToken,
+  getStoredUUID,
+} from "../utils/AuthUtils";
 import ChangePasswordDialog from "../components/ChangePasswordDialog";
 
 function MyProfilePage() {
@@ -168,6 +172,7 @@ function MyProfilePage() {
                   }
                   margin="normal"
                   required
+                  disabled={!getStoredPrivileges()?.includes("ACCOUNT_W")}
                 />
                 <TextField
                   label="Phone Number"
@@ -179,6 +184,7 @@ function MyProfilePage() {
                   margin="normal"
                   required
                   type="number"
+                  disabled={!getStoredPrivileges()?.includes("ACCOUNT_W")}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -191,6 +197,7 @@ function MyProfilePage() {
                   }
                   margin="normal"
                   required
+                  disabled={!getStoredPrivileges()?.includes("ACCOUNT_W")}
                 />
                 <FormControl fullWidth margin="normal" required>
                   <InputLabel id="academici-title-id">
@@ -206,6 +213,7 @@ function MyProfilePage() {
                         e.target.value as string
                       )
                     }
+                    disabled={!getStoredPrivileges()?.includes("ACCOUNT_W")}
                   >
                     {Object.keys(AcademicTitle).map((titleKey, index) => {
                       const titleValue = Object.values(AcademicTitle)[index];
@@ -220,7 +228,12 @@ function MyProfilePage() {
               </Grid>
             </Grid>
             <div className="button-container">
-              <Button variant="contained" className="save-button" type="submit">
+              <Button
+                variant="contained"
+                className="save-button"
+                type="submit"
+                disabled={!getStoredPrivileges()?.includes("ACCOUNT_W")}
+              >
                 Save
               </Button>
             </div>
@@ -277,6 +290,7 @@ function MyProfilePage() {
               variant="contained"
               className="save-button"
               onClick={handleOpenChangePassword}
+              disabled={!getStoredPrivileges()?.includes("ACCOUNT_W")}
             >
               Change Password
             </Button>

@@ -11,7 +11,7 @@ import "../styles/LoginStyles.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import { storeToken, storeUserUuid } from "../utils/AuthUtils";
+import { storePrivileges, storeToken, storeUserUuid } from "../utils/AuthUtils";
 import ErrorPopup from "../components/ErrorPopup";
 import SuccessPopup from "../components/SuccessPopup";
 
@@ -37,10 +37,11 @@ function Login() {
         }
       );
 
-      const { token, employeeUuid } = response.data;
+      const { token, employeeUuid, privileges } = response.data;
 
       storeToken(token);
       storeUserUuid(employeeUuid);
+      storePrivileges(privileges);
       setSuccessPopupOpen(true);
 
       setTimeout(() => {

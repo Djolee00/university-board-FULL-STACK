@@ -27,7 +27,11 @@ import BoardStatus, {
   Comment,
 } from "../models/Board";
 import ErrorPopup from "../components/ErrorPopup";
-import { getStoredToken, getStoredUUID } from "../utils/AuthUtils";
+import {
+  getStoredPrivileges,
+  getStoredToken,
+  getStoredUUID,
+} from "../utils/AuthUtils";
 import Navbar from "../components/NavBar";
 import SideMenu from "../components/SideMenu";
 import SuccessPopup from "../components/SuccessPopup";
@@ -473,6 +477,13 @@ function BoardDetailsPage() {
   }
 
   async function downloadFile(file: BoardFile) {
+    if (
+      !getStoredPrivileges()?.includes("FILE_DOWN") ||
+      board!.memberships?.filter((m) => m.employee?.uuid === getStoredUUID())
+        .length === 0
+    ) {
+      return;
+    }
     axios({
       method: "get",
       url: `http://localhost:8080/api/v1/files/${file.uuid!}`,
@@ -689,6 +700,12 @@ function BoardDetailsPage() {
                   variant="contained"
                   color="primary"
                   onClick={handleEditModeToggle}
+                  disabled={
+                    !getStoredPrivileges()?.includes("BOARD_W") ||
+                    board?.memberships?.filter(
+                      (m) => m.employee?.uuid === getStoredUUID()
+                    ).length === 0
+                  }
                 >
                   <EditIcon fontSize="small" />
                   Edit
@@ -697,10 +714,15 @@ function BoardDetailsPage() {
                   variant="outlined"
                   style={{
                     marginTop: "10px",
-                    borderColor: "#f44336",
                   }}
                   color="error"
                   onClick={handleDeleteBoard}
+                  disabled={
+                    !getStoredPrivileges()?.includes("BOARD_W") ||
+                    board?.memberships?.filter(
+                      (m) => m.employee?.uuid === getStoredUUID()
+                    ).length === 0
+                  }
                 >
                   <DeleteIcon fontSize="small" />
                   Delete
