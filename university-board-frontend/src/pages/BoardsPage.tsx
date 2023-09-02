@@ -33,6 +33,7 @@ import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import BoardCreationDialog from "../components/BoardCreationDialog";
 import { Employee } from "../models/Employee";
 import { Link } from "react-router-dom";
+import { apiBaseUrl } from "../utils/ConfigUtils";
 
 export interface SearchData {
   name: string | null;
@@ -74,7 +75,7 @@ function BoardsPage() {
 
   useEffect(() => {
     const generateApiUrl = () => {
-      let apiUrl = `http://localhost:8080/api/v1/boards?page=${currentPage}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
+      let apiUrl = `${apiBaseUrl}/boards?page=${currentPage}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
 
       if (displayMyBoards) {
         apiUrl += `&employeeUuid=${employeeUuid}`;
@@ -125,14 +126,11 @@ function BoardsPage() {
 
     const fetchBoardTypes = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/board-types`,
-          {
-            headers: {
-              Authorization: `Bearer ${getStoredToken()}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiBaseUrl}/board-types`, {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        });
         setBoardTypes(response.data);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -146,14 +144,11 @@ function BoardsPage() {
 
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/employees`,
-          {
-            headers: {
-              Authorization: `Bearer ${getStoredToken()}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiBaseUrl}/employees`, {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        });
         setEmployees(response.data.content);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -256,7 +251,7 @@ function BoardsPage() {
 
   async function createBoard(board: Board): Promise<void> {
     try {
-      await axios.post(`http://localhost:8080/api/v1/boards`, board, {
+      await axios.post(`${apiBaseUrl}/boards`, board, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },

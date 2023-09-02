@@ -44,6 +44,7 @@ import MembersStep from "../components/MemberStep";
 import { Employee } from "../models/Employee";
 import CommentsComponent from "../components/CommentsComponent";
 import FilesComponent from "../components/FilesComponent";
+import { apiBaseUrl } from "../utils/ConfigUtils";
 
 function BoardDetailsPage() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -91,7 +92,7 @@ function BoardDetailsPage() {
       return navigate("/myprofile");
     }
     axios
-      .get<Board>(`http://localhost:8080/api/v1/boards/${uuid}`, {
+      .get<Board>(`${apiBaseUrl}/boards/${uuid}`, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },
@@ -134,7 +135,7 @@ function BoardDetailsPage() {
 
   async function fetchBoardTypes() {
     await axios
-      .get<BoardType[]>(`http://localhost:8080/api/v1/board-types`, {
+      .get<BoardType[]>(`${apiBaseUrl}/board-types`, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },
@@ -152,7 +153,7 @@ function BoardDetailsPage() {
 
   async function fetchEmployees() {
     await axios
-      .get<BoardType[]>(`http://localhost:8080/api/v1/employees`, {
+      .get<BoardType[]>(`${apiBaseUrl}/employees`, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },
@@ -184,15 +185,11 @@ function BoardDetailsPage() {
 
   async function updateBoard(newBoard: any) {
     await axios
-      .patch<Board>(
-        `http://localhost:8080/api/v1/boards/${board!.uuid}`,
-        newBoard,
-        {
-          headers: {
-            Authorization: `Bearer ${getStoredToken()}`,
-          },
-        }
-      )
+      .patch<Board>(`${apiBaseUrl}/boards/${board!.uuid}`, newBoard, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
       .then((response) => {
         setBoard(response.data);
         setEditingBoard(response.data);
@@ -245,7 +242,7 @@ function BoardDetailsPage() {
 
   async function deleteBoard() {
     await axios
-      .delete(`http://localhost:8080/api/v1/boards/${board!.uuid}`, {
+      .delete(`${apiBaseUrl}/boards/${board!.uuid}`, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },
@@ -292,16 +289,11 @@ function BoardDetailsPage() {
 
   async function deleteMember(uuid: string) {
     await axios
-      .delete(
-        `http://localhost:8080/api/v1/boards/${
-          board!.uuid
-        }/memberships/${uuid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${getStoredToken()}`,
-          },
-        }
-      )
+      .delete(`${apiBaseUrl}/boards/${board!.uuid}/memberships/${uuid}`, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
       .then((response) => {
         setSuccessMessage("Membership successfully deleted");
         setSuccessPopupOpen(true);
@@ -325,9 +317,7 @@ function BoardDetailsPage() {
   async function handleSaveEdit(member: Membership): Promise<void> {
     await axios
       .patch(
-        `http://localhost:8080/api/v1/boards/${board!.uuid}/memberships/${
-          member.uuid
-        }`,
+        `${apiBaseUrl}/boards/${board!.uuid}/memberships/${member.uuid}`,
         { commencementDate: member.commencementDate, status: member.status },
         {
           headers: {
@@ -360,15 +350,11 @@ function BoardDetailsPage() {
 
   async function addNewMembership(member: Membership): Promise<void> {
     await axios
-      .post(
-        `http://localhost:8080/api/v1/boards/${board!.uuid}/memberships`,
-        member,
-        {
-          headers: {
-            Authorization: `Bearer ${getStoredToken()}`,
-          },
-        }
-      )
+      .post(`${apiBaseUrl}/boards/${board!.uuid}/memberships`, member, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
       .then((response) => {
         setSuccessMessage("Memberships successfully saved");
         setSuccessPopupOpen(true);
@@ -418,15 +404,11 @@ function BoardDetailsPage() {
 
   async function addNewComment(comment: any): Promise<void> {
     await axios
-      .post<Comment>(
-        `http://localhost:8080/api/v1/boards/${board!.uuid}/comments`,
-        comment,
-        {
-          headers: {
-            Authorization: `Bearer ${getStoredToken()}`,
-          },
-        }
-      )
+      .post<Comment>(`${apiBaseUrl}/boards/${board!.uuid}/comments`, comment, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+        },
+      })
       .then((response) => {
         setSuccessMessage("Comment successfully saved");
         setSuccessPopupOpen(true);
@@ -453,7 +435,7 @@ function BoardDetailsPage() {
 
   async function deleteComment(comment: Comment): Promise<void> {
     await axios
-      .delete(`http://localhost:8080/api/v1/comments/${comment.uuid!}`, {
+      .delete(`${apiBaseUrl}/comments/${comment.uuid!}`, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },
@@ -491,7 +473,7 @@ function BoardDetailsPage() {
     }
     axios({
       method: "get",
-      url: `http://localhost:8080/api/v1/files/${file.uuid!}`,
+      url: `${apiBaseUrl}/files/${file.uuid!}`,
       responseType: "blob",
       headers: {
         Authorization: `Bearer ${getStoredToken()}`,
@@ -529,7 +511,7 @@ function BoardDetailsPage() {
 
   async function deleteFile(file: BoardFile) {
     await axios
-      .delete(`http://localhost:8080/api/v1/files/${file.uuid!}`, {
+      .delete(`${apiBaseUrl}/files/${file.uuid!}`, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },

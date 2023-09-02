@@ -37,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 import CreateEmployeeDialog from "../components/CreateEmployeeDialog";
 import { Privilege, Role } from "../models/UserProfile";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import { apiBaseUrl } from "../utils/ConfigUtils";
 
 export interface SearchData {
   firstName: string | null;
@@ -75,7 +76,7 @@ const EmployeesPage = () => {
 
   useEffect(() => {
     const generateApiUrl = () => {
-      let apiUrl = `http://localhost:8080/api/v1/employees?size=10&page=${currentPage}&sort=${sortBy},${sortOrder}`;
+      let apiUrl = `${apiBaseUrl}/employees?size=10&page=${currentPage}&sort=${sortBy},${sortOrder}`;
 
       if (firstName) {
         apiUrl += `&firstNameLike=${firstName}`;
@@ -127,7 +128,7 @@ const EmployeesPage = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/roles`, {
+        const response = await axios.get(`${apiBaseUrl}/roles`, {
           headers: {
             Authorization: `Bearer ${getStoredToken()}`,
           },
@@ -145,14 +146,11 @@ const EmployeesPage = () => {
 
     const fetchPrivileges = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/privileges`,
-          {
-            headers: {
-              Authorization: `Bearer ${getStoredToken()}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiBaseUrl}/privileges`, {
+          headers: {
+            Authorization: `Bearer ${getStoredToken()}`,
+          },
+        });
         setPrivileges(response.data);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -201,14 +199,11 @@ const EmployeesPage = () => {
     if (selectedEmployee) {
       if (selectedEmployee)
         axios
-          .delete(
-            `http://localhost:8080/api/v1/employees/${selectedEmployee.uuid}`,
-            {
-              headers: {
-                Authorization: `Bearer ${getStoredToken()}`,
-              },
-            }
-          )
+          .delete(`${apiBaseUrl}/employees/${selectedEmployee.uuid}`, {
+            headers: {
+              Authorization: `Bearer ${getStoredToken()}`,
+            },
+          })
           .then(() => {
             setSuccessMessage("Employee successfully deleted");
             setSuccessPopupOpen(true);
@@ -266,7 +261,7 @@ const EmployeesPage = () => {
 
   const handleCreateEmployee = (newEmployee: Employee): Promise<void> => {
     return axios
-      .post(`http://localhost:8080/api/v1/employees`, newEmployee, {
+      .post(`${apiBaseUrl}/employees`, newEmployee, {
         headers: {
           Authorization: `Bearer ${getStoredToken()}`,
         },

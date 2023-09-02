@@ -14,6 +14,7 @@ import axios from "axios";
 import { storePrivileges, storeToken, storeUserUuid } from "../utils/AuthUtils";
 import ErrorPopup from "../components/ErrorPopup";
 import SuccessPopup from "../components/SuccessPopup";
+import { apiBaseUrl } from "../utils/ConfigUtils";
 
 function Login() {
   const navigate = useNavigate();
@@ -29,13 +30,10 @@ function Login() {
     const password = formData.get("password") as string;
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/signin",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${apiBaseUrl}/auth/signin`, {
+        email,
+        password,
+      });
 
       const { token, employeeUuid, privileges } = response.data;
 

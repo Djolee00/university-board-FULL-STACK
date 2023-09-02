@@ -25,6 +25,7 @@ import {
   getStoredUUID,
 } from "../utils/AuthUtils";
 import ChangePasswordDialog from "../components/ChangePasswordDialog";
+import { apiBaseUrl } from "../utils/ConfigUtils";
 
 function MyProfilePage() {
   const [employee, setEmployee] = useState<Employee>({
@@ -67,7 +68,7 @@ function MyProfilePage() {
   ) => {
     axios
       .patch(
-        `http://localhost:8080/api/v1/user-profiles/${employee.userProfile?.uuid}`,
+        `${apiBaseUrl}/user-profiles/${employee.userProfile?.uuid}`,
         { oldPassword, newPassword },
         {
           headers: {
@@ -100,15 +101,11 @@ function MyProfilePage() {
   const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     axios
-      .patch(
-        `http://localhost:8080/api/v1/employees/${employee.uuid}`,
-        employee,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      .patch(`${apiBaseUrl}/employees/${employee.uuid}`, employee, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setSuccessMessage("Employee's information successfully updated");
         setSuccessPopupOpen(true);
@@ -139,7 +136,7 @@ function MyProfilePage() {
     }
 
     axios
-      .get(`http://localhost:8080/api/v1/employees/${uuid}`, {
+      .get(`${apiBaseUrl}/employees/${uuid}`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },

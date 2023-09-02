@@ -35,6 +35,7 @@ import {
   getStoredUUID,
 } from "../utils/AuthUtils";
 import "../styles/FileComponentStyle.css";
+import { apiBaseUrl } from "../utils/ConfigUtils";
 
 interface Props {
   boardFiles: BoardFile[];
@@ -220,16 +221,12 @@ const FilesComponent = ({
     formData.append("file", file);
 
     await axios
-      .post<BoardFile>(
-        `http://localhost:8080/api/v1/${board!.uuid}/files`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${getStoredToken()}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      )
+      .post<BoardFile>(`${apiBaseUrl}/${board!.uuid}/files`, formData, {
+        headers: {
+          Authorization: `Bearer ${getStoredToken()}`,
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         onUpload(response.data);
       })
