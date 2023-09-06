@@ -201,7 +201,7 @@ function BoardDetailsPage() {
         if (axios.isAxiosError(error)) {
           setErrorMessage(error.response?.data.detail);
         } else {
-          setErrorMessage("Error fetching board information from server");
+          setErrorMessage("Error updating board information.");
         }
         setErrorPopupOpen(true);
       });
