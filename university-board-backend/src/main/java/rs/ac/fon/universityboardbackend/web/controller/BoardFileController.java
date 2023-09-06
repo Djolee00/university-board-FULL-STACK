@@ -72,6 +72,6 @@ public class BoardFileController extends AbstractController {
         hasPrivilegeOrThrow(PrivilegeCode.FILE_D);
         BoardFile boardFile = boardFileService.findByUuid(uuid);
         boardFileService.deleteFile(boardFile);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

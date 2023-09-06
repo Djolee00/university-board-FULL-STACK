@@ -100,7 +100,7 @@ public class BoardController extends AbstractController {
         hasPrivilegeOrThrow(PrivilegeCode.BOARD_W);
         Board board = boardService.findByUuid(uuid);
         boardService.delete(board);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -154,7 +154,7 @@ public class BoardController extends AbstractController {
 
         board.getMemberships().remove(membership);
         boardService.saveOrUpdate(board);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{boardUuid}/memberships")
